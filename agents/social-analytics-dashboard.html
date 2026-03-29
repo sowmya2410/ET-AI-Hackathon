@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GCN — Social Analytics Dashboard → Agent 9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090f;
+    --surface: #11131c;
+    --surface2: #181b28;
+    --border: #2a2f45;
+    --text: #e8eaef;
+    --muted: #8b92a8;
+    --accent: #6366f1;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+    --ig: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #bc1888);
+    --li: #0a66c2;
+    --x: #000;
+    --fb: #1877f2;
+    --tt: #ff0050;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Outfit', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 220px 1fr 320px;
+    grid-template-rows: auto 1fr;
+    gap: 0;
+  }
+  @media (max-width: 1100px) {
+    body { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; }
+    .nav-rail { flex-direction: row; flex-wrap: wrap; }
+    .a9-rail { border-left: none; border-top: 1px solid var(--border); }
+  }
+  .topbar {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .topbar h1 { font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
+  .topbar .sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .run-pill {
+    font-family: var(--mono); font-size: 10px;
+    padding: 6px 12px; border-radius: 8px; background: var(--surface2);
+    border: 1px solid var(--border); color: var(--muted);
+    max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .nav-rail {
+    grid-row: 2;
+    border-right: 1px solid var(--border);
+    padding: 16px 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--surface);
+    overflow-y: auto;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    border: 1px solid transparent; background: transparent;
+    color: var(--text); font-family: var(--sans); font-size: 13px;
+    cursor: pointer; text-align: left; transition: background .15s, border-color .15s;
+  }
+  .nav-btn:hover { background: var(--surface2); }
+  .nav-btn.active { border-color: var(--border); background: var(--surface2); }
+  .nav-btn .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .main-stage {
+    grid-row: 2;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .panel { display: none; animation: fade .35s ease; }
+  .panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .dash-card {
+    border-radius: 16px; border: 1px solid var(--border);
+    background: var(--surface2);
+    overflow: hidden; margin-bottom: 20px;
+  }
+  .dash-head {
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .dash-head h2 { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .dash-head .range { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 20px;
+  }
+  .metric-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .metric-cell label {
+    display: block; font-size: 10px; font-family: var(--mono);
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .metric-cell input {
+    width: 100%;
+    background: transparent; border: none; color: var(--text);
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    outline: none;
+  }
+  .metric-cell .suffix { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .ig-brand { background: var(--ig); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+  .a9-rail {
+    grid-row: 2;
+    border-left: 1px solid var(--border);
+    padding: 20px 16px;
+    background: var(--surface);
+    display: flex; flex-direction: column; gap: 14px;
+    overflow-y: auto;
+  }
+  .a9-rail h3 { font-size: 12px; font-family: var(--mono); color: var(--muted); letter-spacing: 0.08em; }
+  .a9-pre {
+    flex: 1; min-height: 120px;
+    background: #0d0e14;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.55;
+    color: #a5b4fc;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .btn-row { display: flex; flex-direction: column; gap: 8px; }
+  .btn {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    padding: 12px 16px; border-radius: 10px; border: none;
+    cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .hint { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .badge-ok { color: var(--ok); font-family: var(--mono); font-size: 10px; margin-top: 8px; display: none; }
+  .badge-ok.visible { display: block; }
+  .mini-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 12px; }
+  .mini-table th, .mini-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .mini-table th { color: var(--muted); font-weight: 500; font-size: 10px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Social analytics cockpit</h1>
+      <div class="sub">Per-platform metrics → normalized for Agent 9 · localStorage handoff</div>
+    </div>
+    <div class="run-pill" id="runIdDisplay">run_id: (open after orchestrator starts)</div>
+  </header>
+
+  <nav class="nav-rail" id="navRail"></nav>
+
+  <main class="main-stage" id="mainStage"></main>
+
+  <aside class="a9-rail">
+    <h3>Agent 9 payload</h3>
+    <p class="hint">Edits on each tab update <code style="font-size:10px">impressions</code> and <code style="font-size:10px">ctr</code> below. Commit before the main pipeline timer expires (~90–120s after Agent 8).</p>
+    <pre class="a9-pre" id="a9Preview"></pre>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="btnCommit">Commit to Agent 9</button>
+      <button type="button" class="btn btn-secondary" id="btnRandomize">Simulate live refresh</button>
+    </div>
+    <div class="badge-ok" id="commitOk">Saved to localStorage · orchestrator will pick this up if run_id matches.</div>
+    <h3 style="margin-top:16px">Export summary</h3>
+    <table class="mini-table" id="summaryTable">
+      <thead><tr><th>Channel</th><th>Impressions</th><th>CTR</th></tr></thead>
+      <tbody id="summaryBody"></tbody>
+    </table>
+  </aside>
+
+<script>
+(function () {
+  const PLATFORMS = [
+    { id: 'instagram', agentChannel: 'Instagram', label: 'Instagram', dot: '#e6683c', },
+    { id: 'linkedin', agentChannel: 'LinkedIn', label: 'LinkedIn', dot: '#0a66c2', },
+    { id: 'twitter', agentChannel: 'Twitter', label: 'X (Twitter)', dot: '#e7e9ea', },
+    { id: 'facebook', agentChannel: 'Facebook', label: 'Facebook', dot: '#1877f2', },
+    { id: 'tiktok', agentChannel: 'TikTok', label: 'TikTok', dot: '#ff0050', },
+    { id: 'blog', agentChannel: 'Blog', label: 'Blog / CMS', dot: '#a78bfa', },
+    { id: 'sms', agentChannel: 'SMS', label: 'SMS', dot: '#34d399', },
+    { id: 'whatsapp', agentChannel: 'WhatsApp', label: 'WhatsApp', dot: '#25d366', },
+    { id: 'push', agentChannel: 'Push Notification', label: 'Push', dot: '#f472b6', },
+  ];
+
+  const DEFAULTS = {
+    instagram: { reach: 48200, impressions: 71600, engaged: 12400, profileVisits: 2100, followerGrowth: 188, engagementRate: 4.8 },
+    linkedin: { impressions: 31400, uniqueReach: 18700, reactions: 820, comments: 94, reposts: 31, engagementRate: 3.2 },
+    twitter: { impressions: 89200, engagements: 6400, linkClicks: 420, profileVisits: 1100, engagementRate: 2.4 },
+    facebook: { reach: 52000, impressions: 78000, reactions: 1200, comments: 210, shares: 156, engagementRate: 2.1 },
+    tiktok: { views: 124000, likes: 8900, comments: 412, shares: 290, watchTimeHours: 420, engagementRate: 5.5 },
+    blog: { views: 12847, sessions: 10200, avgReadSec: 222, ctaClicks: 938, ctrPercent: 7.3 },
+    sms: { sent: 84200, deliveredPct: 97.8, linkClicks: 6180, optOuts: 42 },
+    whatsapp: { sent: 28400, readPct: 91.2, replies: 3120, conversionPct: 12.4 },
+    push: { sent: 110000, openPct: 22.4, tapPct: 8.7, dismiss: 12400 },
+  };
+
+  const state = JSON.parse(JSON.stringify(DEFAULTS));
+  let activeId = 'instagram';
+
+  function getRunId() {
+    try {
+      return localStorage.getItem('gcn_run_id') || '';
+    } catch (_) { return ''; }
+  }
+
+  function impressionsForAgent9(id) {
+    const s = state[id];
+    switch (id) {
+      case 'instagram': return Math.round(s.impressions || s.reach);
+      case 'linkedin': return Math.round(s.impressions);
+      case 'twitter': return Math.round(s.impressions);
+      case 'facebook': return Math.round(s.impressions || s.reach);
+      case 'tiktok': return Math.round(s.views);
+      case 'blog': return Math.round(s.views);
+      case 'sms': return Math.round(s.sent);
+      case 'whatsapp': return Math.round(s.sent);
+      case 'push': return Math.round(s.sent);
+      default: return 10000;
+    }
+  }
+
+  /** CTR as fraction 0–1 for Agent 9 */
+  function ctrForAgent9(id) {
+    const s = state[id];
+    switch (id) {
+      case 'instagram':
+      case 'linkedin':
+      case 'twitter':
+      case 'facebook':
+      case 'tiktok':
+        return Math.max(0, Math.min(1, (Number(s.engagementRate) || 0) / 100));
+      case 'blog':
+        return Math.max(0, Math.min(1, (Number(s.ctrPercent) || 0) / 100));
+      case 'sms':
+        return s.sent > 0 ? Math.min(1, (Number(s.linkClicks) || 0) / s.sent) : 0;
+      case 'whatsapp':
+        return Math.max(0, Math.min(1, (Number(s.conversionPct) || 0) / 100));
+      case 'push':
+        return Math.max(0, Math.min(1, (Number(s.tapPct) || 0) / 100));
+      default: return 0.05;
+    }
+  }
+
+  function buildRichSnapshot() {
+    const out = {};
+    PLATFORMS.forEach(p => {
+      out[p.id] = { ...state[p.id], impressions_ui: impressionsForAgent9(p.id), ctr_model: ctrForAgent9(p.id) };
+    });
+    return out;
+  }
+
+  function buildAgent9Analytics() {
+    return PLATFORMS.map(p => ({
+      channel: p.agentChannel,
+      impressions: impressionsForAgent9(p.id),
+      ctr: ctrForAgent9(p.id),
+      detail: state[p.id],
+    }));
+  }
+
+  function refreshPreview() {
+    const payload = {
+      runId: getRunId(),
+      analytics: buildAgent9Analytics(),
+      detail_by_platform: buildRichSnapshot(),
+      captured_at: Date.now(),
+    };
+    document.getElementById('a9Preview').textContent = JSON.stringify(payload, null, 2);
+    const tbody = document.getElementById('summaryBody');
+    tbody.innerHTML = '';
+    payload.analytics.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${row.channel}</td><td>${row.impressions.toLocaleString()}</td><td>${(row.ctr * 100).toFixed(2)}%</td>`;
+      tbody.appendChild(tr);
+    });
+    return payload;
+  }
+
+  function commitToStorage() {
+    const runId = getRunId();
+    const payload = refreshPreview();
+    payload.runId = runId;
+    const record = {
+      runId,
+      analytics: payload.analytics,
+      detail_by_platform: payload.detail_by_platform,
+      captured_at: payload.captured_at,
+    };
+    try {
+      localStorage.setItem('gcn_social_analytics_dashboard', JSON.stringify(record));
+    } catch (e) {
+      alert('Could not save: ' + e.message);
+      return;
+    }
+    const ok = document.getElementById('commitOk');
+    ok.classList.add('visible');
+    setTimeout(() => ok.classList.remove('visible'), 5000);
+    window.dispatchEvent(new CustomEvent('gcn-social-analytics-committed', { detail: record }));
+  }
+
+  function randomizePlatform(id) {
+    const r = (a, b) => Math.floor(a + Math.random() * (b - a));
+    const rf = (a, b) => a + Math.random() * (b - a);
+    const s = state[id];
+    switch (id) {
+      case 'instagram':
+        s.reach = r(30000, 90000);
+        s.impressions = Math.round(s.reach * rf(1.2, 1.8));
+        s.engaged = r(5000, 20000);
+        s.engagementRate = rf(2.5, 6.5);
+        break;
+      case 'linkedin':
+        s.impressions = r(15000, 45000);
+        s.uniqueReach = Math.round(s.impressions * rf(0.45, 0.65));
+        s.engagementRate = rf(1.8, 4.5);
+        break;
+      case 'twitter':
+        s.impressions = r(40000, 120000);
+        s.engagements = r(3000, 12000);
+        s.engagementRate = rf(1.5, 3.5);
+        break;
+      case 'facebook':
+        s.reach = r(25000, 80000);
+        s.impressions = Math.round(s.reach * rf(1.1, 1.5));
+        s.engagementRate = rf(1.5, 3.2);
+        break;
+      case 'tiktok':
+        s.views = r(50000, 200000);
+        s.engagementRate = rf(4, 9);
+        break;
+      case 'blog':
+        s.views = r(5000, 25000);
+        s.ctrPercent = rf(4, 11);
+        break;
+      case 'sms':
+        s.sent = r(50000, 120000);
+        s.linkClicks = r(3000, 9000);
+        break;
+      case 'whatsapp':
+        s.sent = r(15000, 40000);
+        s.conversionPct = rf(8, 16);
+        break;
+      case 'push':
+        s.sent = r(80000, 150000);
+        s.tapPct = rf(6, 12);
+        break;
+      default: break;
+    }
+  }
+
+  function randomizeAll() {
+    PLATFORMS.forEach(p => randomizePlatform(p.id));
+    renderInputsForActive();
+    refreshPreview();
+  }
+
+  function fieldRows(id) {
+    const s = state[id];
+    const rows = [];
+    const num = (key, label, step = 1) =>
+      rows.push({ key, label, step, val: s[key] });
+
+    if (id === 'instagram') {
+      num('reach', 'Accounts reached');
+      num('impressions', 'Impressions');
+      num('engaged', 'Accounts engaged');
+      num('profileVisits', 'Profile visits');
+      num('followerGrowth', 'New followers');
+      num('engagementRate', 'Engagement rate %', 0.1);
+    } else if (id === 'linkedin') {
+      num('impressions', 'Impressions');
+      num('uniqueReach', 'Members reached');
+      num('reactions', 'Reactions');
+      num('comments', 'Comments');
+      num('reposts', 'Reposts');
+      num('engagementRate', 'Engagement rate %', 0.1);
+    } else if (id === 'twitter') {
+      num('impressions', 'Impressions');
+      num('engagements', 'Total engagements');
+      num('linkClicks', 'Link clicks');
+      num('profileVisits', 'Profile visits');
+      num('engagementRate', 'Engagement rate %', 0.1);
+    } else if (id === 'facebook') {
+      num('reach', 'Reach');
+      num('impressions', 'Impressions');
+      num('reactions', 'Reactions');
+      num('comments', 'Comments');
+      num('shares', 'Shares');
+      num('engagementRate', 'Engagement rate %', 0.1);
+    } else if (id === 'tiktok') {
+      num('views', 'Video views');
+      num('likes', 'Likes');
+      num('comments', 'Comments');
+      num('shares', 'Shares');
+      num('watchTimeHours', 'Hours watched');
+      num('engagementRate', 'Engagement rate %', 0.1);
+    } else if (id === 'blog') {
+      num('views', 'Page views');
+      num('sessions', 'Sessions');
+      num('avgReadSec', 'Avg read (sec)');
+      num('ctaClicks', 'CTA clicks');
+      num('ctrPercent', 'CTR %', 0.1);
+    } else if (id === 'sms') {
+      num('sent', 'Messages sent');
+      num('deliveredPct', 'Delivery %', 0.1);
+      num('linkClicks', 'Link clicks');
+      num('optOuts', 'Opt-outs');
+    } else if (id === 'whatsapp') {
+      num('sent', 'Messages sent');
+      num('readPct', 'Read rate %', 0.1);
+      num('replies', 'Replies');
+      num('conversionPct', 'Conversion %', 0.1);
+    } else if (id === 'push') {
+      num('sent', 'Notifications sent');
+      num('openPct', 'Open rate %', 0.1);
+      num('tapPct', 'Tap-through %', 0.1);
+      num('dismiss', 'Dismissed');
+    }
+    return rows;
+  }
+
+  function renderNav() {
+    const nav = document.getElementById('navRail');
+    nav.innerHTML = '';
+    PLATFORMS.forEach(p => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'nav-btn' + (p.id === activeId ? ' active' : '');
+      b.innerHTML = `<span class="dot" style="background:${p.dot}"></span>${p.label}`;
+      b.addEventListener('click', () => {
+        activeId = p.id;
+        renderNav();
+        renderPanels();
+        renderInputsForActive();
+      });
+      nav.appendChild(b);
+    });
+  }
+
+  function renderPanels() {
+    const stage = document.getElementById('mainStage');
+    stage.innerHTML = '';
+    PLATFORMS.forEach(p => {
+      const sec = document.createElement('section');
+      sec.className = 'panel' + (p.id === activeId ? ' active' : '');
+      sec.dataset.platform = p.id;
+      const card = document.createElement('div');
+      card.className = 'dash-card';
+      const titleStyle = p.id === 'instagram' ? 'instagram-title' : '';
+      card.innerHTML = `
+        <div class="dash-head">
+          <h2 class="${titleStyle}"><span>${p.label}</span></h2>
+          <span class="range">Last 7 days · simulated studio</span>
+        </div>
+        <div class="metrics-grid" id="grid-${p.id}"></div>
+      `;
+      sec.appendChild(card);
+      stage.appendChild(sec);
+    });
+    const igTitle = stage.querySelector('.instagram-title');
+    if (igTitle) igTitle.innerHTML = '<span class="ig-brand">Instagram</span> Insights';
+  }
+
+  function renderInputsForActive() {
+    PLATFORMS.forEach(p => {
+      const grid = document.getElementById('grid-' + p.id);
+      if (!grid) return;
+      grid.innerHTML = '';
+      if (p.id !== activeId) return;
+      fieldRows(p.id).forEach(row => {
+        const cell = document.createElement('div');
+        cell.className = 'metric-cell';
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.step = row.step || 1;
+        inp.value = row.val;
+        inp.addEventListener('input', () => {
+          state[p.id][row.key] = inp.step < 1 ? parseFloat(inp.value) || 0 : parseInt(inp.value, 10) || 0;
+          refreshPreview();
+        });
+        cell.innerHTML = `<label>${row.label}</label>`;
+        cell.appendChild(inp);
+        grid.appendChild(cell);
+      });
+    });
+  }
+
+  function hydrateFromHandoff() {
+    try {
+      const raw = localStorage.getItem('gcn_publisher_handoff');
+      if (!raw) return;
+      const h = JSON.parse(raw);
+      const pkgKeys = Object.keys(h.formatted_packages || {});
+      const match = PLATFORMS.find(p => pkgKeys.includes(p.agentChannel));
+      if (match) activeId = match.id;
+    } catch (_) {}
+  }
+
+  document.getElementById('runIdDisplay').textContent = 'run_id: ' + (getRunId() || '(none — start pipeline first)');
+  document.getElementById('btnCommit').addEventListener('click', commitToStorage);
+  document.getElementById('btnRandomize').addEventListener('click', randomizeAll);
+
+  hydrateFromHandoff();
+  renderNav();
+  renderPanels();
+  renderInputsForActive();
+  refreshPreview();
+
+  window.addEventListener('storage', ev => {
+    if (ev.key === 'gcn_run_id') {
+      document.getElementById('runIdDisplay').textContent = 'run_id: ' + (ev.newValue || '(none)');
+    }
+    if (ev.key === 'gcn_publisher_handoff' && ev.newValue) {
+      hydrateFromHandoff();
+      renderNav();
+      renderPanels();
+      renderInputsForActive();
+      refreshPreview();
+    }
+  });
+})();
+</script>
+</body>
+</html>

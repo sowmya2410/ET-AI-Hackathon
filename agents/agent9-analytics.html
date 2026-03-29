@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Agent 9 Analytics Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #11151b;
+    --surface2: #171c24;
+    --border: #293241;
+    --text: #e6edf7;
+    --muted: #8fa0b8;
+    --accent: #5eead4;
+    --accent2: #93c5fd;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Outfit', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(circle at top right, rgba(94,234,212,0.08), transparent 28%),
+      radial-gradient(circle at bottom left, rgba(147,197,253,0.07), transparent 32%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+  .shell { max-width: 1320px; margin: 0 auto; padding: 24px 20px 48px; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .eyebrow {
+    font: 11px var(--mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .sub {
+    color: var(--muted);
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  .pillbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .pill {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font: 11px var(--mono);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .card h3 {
+    font: 11px var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .metric {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-sub {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+  .section-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .section-title {
+    font: 11px var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    font: 10px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  td strong { color: var(--accent2); }
+  .tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font: 10px var(--mono);
+    color: var(--muted);
+  }
+  .json {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    overflow: auto;
+    font: 11px/1.6 var(--mono);
+    color: #b7c7dd;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 420px;
+  }
+  .empty {
+    padding: 30px;
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+    color: var(--muted);
+    text-align: center;
+    background: rgba(255,255,255,0.02);
+  }
+  .channel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .channel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .channel-name {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .channel-name strong { font-size: 16px; }
+  .row {
+    display: flex; justify-content: space-between; gap: 10px; margin: 7px 0;
+    font-size: 13px;
+  }
+  .row span:first-child { color: var(--muted); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  button {
+    background: #14212b;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font: 11px var(--mono);
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent2); }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Agent 9 Analytics Viewer</div>
+        <h1>Read-only analytics handoff</h1>
+        <div class="sub">Displays Agent 8 pipeline handoff plus the latest analytics payload committed for the current run.</div>
+      </div>
+      <div class="pillbar">
+        <span class="pill" id="runPill">run_id: —</span>
+        <span class="pill" id="sourcePill">source: waiting</span>
+        <span class="pill" id="updatedPill">updated: —</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Top Channel</h3>
+        <div class="metric" id="topChannelMetric">—</div>
+        <div class="metric-sub" id="topChannelSub">Awaiting analytics</div>
+      </div>
+      <div class="card">
+        <h3>Total Impressions</h3>
+        <div class="metric" id="impressionsMetric">0</div>
+        <div class="metric-sub">Across all reported channels</div>
+      </div>
+      <div class="card">
+        <h3>Average CTR</h3>
+        <div class="metric" id="avgCtrMetric">0%</div>
+        <div class="metric-sub">Mean CTR across channels</div>
+      </div>
+      <div class="card">
+        <h3>Channels</h3>
+        <div class="metric" id="channelCountMetric">0</div>
+        <div class="metric-sub" id="channelCountSub">No analytics rows yet</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="section-head">
+        <div class="section-title">Analytics by Channel</div>
+        <div class="actions">
+          <button type="button" id="refreshBtn">Refresh</button>
+          <button type="button" id="downloadBtn">Download JSON</button>
+        </div>
+      </div>
+      <div id="analyticsMount" class="empty">Waiting for analytics from Agent 8 / publisher simulation.</div>
+    </div>
+
+    <div class="table-card">
+      <div class="section-head">
+        <div class="section-title">Agent 8 Handoff Snapshot</div>
+      </div>
+      <div id="handoffMount" class="empty">No Agent 8 handoff found for the current run.</div>
+    </div>
+
+    <div class="table-card">
+      <div class="section-head">
+        <div class="section-title">Raw JSON</div>
+      </div>
+      <pre class="json" id="jsonMount">No payload loaded.</pre>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const KEYS = [
+    ['gcn_social_analytics_dashboard', 'social_analytics_dashboard'],
+    ['gcn_publisher_analytics', 'publisher_ui'],
+  ];
+
+  function readJson(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function getRunId() {
+    try { return localStorage.getItem('gcn_run_id') || ''; } catch { return ''; }
+  }
+
+  function currentAnalyticsRecord() {
+    const runId = getRunId();
+    for (const [key, source] of KEYS) {
+      const record = readJson(key);
+      if (record && (!runId || record.runId === runId) && Array.isArray(record.analytics)) {
+        return { ...record, __source: source };
+      }
+    }
+    return null;
+  }
+
+  function currentHandoff() {
+    const runId = getRunId();
+    const handoff = readJson('gcn_publisher_handoff');
+    if (!handoff) return null;
+    if (runId && handoff.run_id && handoff.run_id !== runId) return null;
+    return handoff;
+  }
+
+  function fmtPct(value) {
+    const num = Number(value) || 0;
+    return `${(num * 100).toFixed(2)}%`;
+  }
+
+  function fmtNum(value) {
+    return (Number(value) || 0).toLocaleString();
+  }
+
+  function downloadCurrentPayload(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `agent9-analytics-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function render() {
+    const runId = getRunId();
+    const record = currentAnalyticsRecord();
+    const handoff = currentHandoff();
+
+    document.getElementById('runPill').textContent = `run_id: ${runId || '—'}`;
+    document.getElementById('sourcePill').textContent = `source: ${record?.__source || 'waiting'}`;
+    document.getElementById('updatedPill').textContent = `updated: ${record?.captured_at ? new Date(record.captured_at).toLocaleTimeString() : '—'}`;
+
+    const analytics = record?.analytics || [];
+    const totalImpressions = analytics.reduce((sum, item) => sum + (Number(item.impressions) || 0), 0);
+    const avgCtr = analytics.length
+      ? analytics.reduce((sum, item) => sum + (Number(item.ctr) || 0), 0) / analytics.length
+      : 0;
+    const top = analytics.length
+      ? [...analytics].sort((a, b) => (Number(b.ctr) || 0) - (Number(a.ctr) || 0))[0]
+      : null;
+
+    document.getElementById('topChannelMetric').textContent = top?.channel || '—';
+    document.getElementById('topChannelSub').textContent = top ? `CTR ${fmtPct(top.ctr)} · ${fmtNum(top.impressions)} impressions` : 'Awaiting analytics';
+    document.getElementById('impressionsMetric').textContent = fmtNum(totalImpressions);
+    document.getElementById('avgCtrMetric').textContent = fmtPct(avgCtr);
+    document.getElementById('channelCountMetric').textContent = String(analytics.length);
+    document.getElementById('channelCountSub').textContent = analytics.length
+      ? analytics.map(item => item.channel).join(', ')
+      : 'No analytics rows yet';
+
+    const analyticsMount = document.getElementById('analyticsMount');
+    if (!analytics.length) {
+      analyticsMount.className = 'empty';
+      analyticsMount.innerHTML = 'Waiting for analytics from Agent 8 / publisher simulation.';
+    } else {
+      analyticsMount.className = 'channel-grid';
+      analyticsMount.innerHTML = analytics.map(item => `
+        <div class="channel-card">
+          <div class="channel-name">
+            <strong>${item.channel || 'Unknown'}</strong>
+            <span class="tag">${fmtPct(item.ctr)}</span>
+          </div>
+          <div class="row"><span>Impressions</span><span>${fmtNum(item.impressions)}</span></div>
+          <div class="row"><span>Clicks</span><span>${fmtNum(item.clicks)}</span></div>
+          <div class="row"><span>Content Type</span><span>${item.content_type || '—'}</span></div>
+          <div class="row"><span>Category</span><span>${item.category || '—'}</span></div>
+          <div class="row"><span>Hour</span><span>${item.timestamp ?? '—'}</span></div>
+          <div class="row"><span>Preview</span><span style="max-width:160px;text-align:right">${item.content ? String(item.content).slice(0, 70) : '—'}</span></div>
+        </div>
+      `).join('');
+    }
+
+    const handoffMount = document.getElementById('handoffMount');
+    if (!handoff?.formatted_packages) {
+      handoffMount.className = 'empty';
+      handoffMount.innerHTML = 'No Agent 8 handoff found for the current run.';
+    } else {
+      const rows = Object.entries(handoff.formatted_packages).map(([channel, pkg]) => `
+        <tr>
+          <td><strong>${channel}</strong></td>
+          <td>${pkg.language || 'EN'}</td>
+          <td>${handoff.publish_results?.[channel]?.status || 'QUEUED'}</td>
+          <td>${(pkg.formatted || '').slice(0, 120)}</td>
+        </tr>
+      `).join('');
+      handoffMount.className = '';
+      handoffMount.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Channel</th>
+              <th>Language</th>
+              <th>Status</th>
+              <th>Formatted Preview</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    document.getElementById('jsonMount').textContent = JSON.stringify({
+      runId,
+      analytics_record: record,
+      agent8_handoff: handoff,
+    }, null, 2);
+
+    document.getElementById('downloadBtn').onclick = () => {
+      downloadCurrentPayload({
+        runId,
+        analytics_record: record,
+        agent8_handoff: handoff,
+      });
+    };
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', render);
+  window.addEventListener('storage', render);
+  render();
+  setInterval(render, 2000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GCN D2C — Agent 8: Publisher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070d0a;
+    --surface: #0e1812;
+    --surface2: #141f17;
+    --border: #1e3325;
+    --accent: #2ecc71;
+    --accent2: #00ffa3;
+    --warn: #f0a500;
+    --danger: #e74c3c;
+    --text: #d4ede0;
+    --muted: #5a7a64;
+    --mono: 'Space Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+    --sans: 'Sora', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid noise bg ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(46,204,113,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,204,113,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .shell { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px; margin-bottom: 32px;
+  }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2s infinite; }
+  .header-title { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+  .header-agent { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── Approval Gate ── */
+  .gate-section {
+    background: linear-gradient(135deg, #0a1f12 0%, #0e2818 100%);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--warn);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gate-section::before {
+    content: 'AWAITING HUMAN APPROVAL';
+    position: absolute; top: 10px; right: 20px;
+    font-family: var(--mono); font-size: 9px; color: var(--warn);
+    letter-spacing: 0.2em; opacity: 0.6;
+  }
+  .gate-label { font-family: var(--mono); font-size: 10px; color: var(--warn); letter-spacing: 0.2em; margin-bottom: 12px; }
+  .gate-title { font-family: var(--serif); font-size: 22px; color: var(--text); margin-bottom: 6px; }
+  .gate-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .gate-tag {
+    font-family: var(--mono); font-size: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 3px 10px; color: var(--muted);
+  }
+  .gate-channels { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .ch-pill {
+    font-size: 11px; font-weight: 600;
+    border-radius: 20px; padding: 5px 14px;
+    border: 1px solid; cursor: default;
+  }
+  .ch-pill.blog    { color: #a78bfa; border-color: #4c1d95; background: rgba(76,29,149,0.15); }
+  .ch-pill.insta   { color: #fb923c; border-color: #7c2d12; background: rgba(124,45,18,0.15); }
+  .ch-pill.sms     { color: #34d399; border-color: #065f46; background: rgba(6,95,70,0.15); }
+  .ch-pill.linkedin{ color: #60a5fa; border-color: #1e3a8a; background: rgba(30,58,138,0.15); }
+  .ch-pill.email   { color: #fbbf24; border-color: #78350f; background: rgba(120,53,15,0.15); }
+  .ch-pill.push    { color: #f472b6; border-color: #831843; background: rgba(131,24,67,0.15); }
+
+  .gate-actions { display: flex; gap: 12px; margin-top: 24px; }
+  .btn-approve {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    background: var(--accent); color: #040d07;
+    border: none; border-radius: 8px; padding: 12px 28px;
+    cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: all 0.2s; box-shadow: 0 0 20px rgba(46,204,113,0.3);
+  }
+  .btn-approve:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 0 30px rgba(46,204,113,0.5); }
+  .btn-reject {
+    font-family: var(--mono); font-size: 12px;
+    background: transparent; color: var(--danger);
+    border: 1px solid var(--danger); border-radius: 8px; padding: 12px 28px;
+    cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .btn-reject:hover { background: rgba(231,76,60,0.1); }
+
+  /* ── Status Bar ── */
+  .status-bar {
+    display: flex; gap: 8px; align-items: center;
+    font-family: var(--mono); font-size: 11px;
+    margin-bottom: 28px;
+    display: none;
+  }
+  .status-bar.visible { display: flex; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse 1.5s infinite; }
+  .status-text { color: var(--accent); }
+
+  /* ── Channels Grid ── */
+  .channels-grid { display: none; }
+  .channels-grid.visible { display: block; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px; margin-top: 36px;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .section-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.2em; white-space: nowrap; }
+
+  /* ── Channel frame ── */
+  .channel-frame {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .channel-frame.revealed { opacity: 1; transform: translateY(0); }
+
+  .ch-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ch-name { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.15em; display: flex; align-items: center; gap: 8px; }
+  .ch-status-ok { font-family: var(--mono); font-size: 10px; color: var(--accent); }
+  .ch-content { background: var(--surface); }
+
+  /* ── Metrics badge ── */
+  .metrics-row {
+    display: flex; gap: 16px; padding: 10px 20px;
+    background: var(--surface2); border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .metric { display: flex; flex-direction: column; }
+  .metric-val { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--accent2); }
+  .metric-lbl { font-size: 10px; color: var(--muted); }
+
+  /* ──────────────────────────────────
+     BLOG STYLES
+  ────────────────────────────────── */
+  .blog-wrapper {
+    max-width: 100%;
+    padding: 36px 40px;
+    background: #faf8f4;
+    color: #1a1a1a;
+    font-family: Georgia, serif;
+  }
+  .blog-category {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #7c3aed; margin-bottom: 12px;
+  }
+  .blog-h1 { font-size: 28px; font-weight: 700; line-height: 1.25; color: #111; margin-bottom: 12px; font-family: Georgia, serif; }
+  .blog-meta { font-size: 12px; color: #888; margin-bottom: 24px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .blog-meta span { display: flex; align-items: center; gap: 4px; }
+  .blog-hero {
+    width: 100%; height: 180px;
+    background: linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #059669 100%);
+    border-radius: 8px; margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: rgba(255,255,255,0.3);
+    font-family: Georgia; font-style: italic;
+  }
+  .blog-body { font-size: 15px; line-height: 1.8; color: #2a2a2a; }
+  .blog-body p { margin-bottom: 16px; }
+  .blog-body strong { color: #111; }
+  .blog-cta {
+    display: inline-block; margin-top: 20px;
+    background: #7c3aed; color: white;
+    padding: 10px 24px; border-radius: 6px;
+    font-family: var(--sans); font-size: 13px; font-weight: 600;
+    text-decoration: none; cursor: pointer;
+  }
+  .blog-tags { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .blog-tag { font-size: 11px; background: #f3f0ff; color: #7c3aed; padding: 3px 10px; border-radius: 12px; }
+  .seo-bar {
+    background: #f0f9f4; border: 1px solid #bbf7d0;
+    padding: 8px 16px; font-size: 11px; color: #065f46;
+    display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--mono);
+  }
+
+  /* ──────────────────────────────────
+     INSTAGRAM STYLES
+  ────────────────────────────────── */
+  .insta-wrapper {
+    background: #fafafa;
+    color: #262626;
+    max-width: 468px;
+    margin: 0 auto;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+  }
+  .insta-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+  }
+  .insta-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(45deg, #f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: white; font-weight: 700;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #e6683c;
+  }
+  .insta-user { display: flex; align-items: center; gap: 10px; }
+  .insta-username { font-size: 13px; font-weight: 600; }
+  .insta-location { font-size: 11px; color: #8e8e8e; }
+  .insta-more { font-size: 20px; color: #262626; cursor: pointer; line-height: 1; }
+  .insta-image {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: white; text-align: center; padding: 20px;
+    position: relative; overflow: hidden;
+  }
+  .insta-image::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(0,0,0,0.25);
+  }
+  .insta-image-text { position: relative; z-index: 1; }
+  .insta-image-headline { font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .insta-image-sub { font-size: 12px; opacity: 0.9; }
+  .insta-actions { display: flex; align-items: center; padding: 8px 16px; gap: 4px; }
+  .insta-btn { background: none; border: none; cursor: pointer; padding: 6px; font-size: 22px; display: flex; }
+  .insta-spacer { flex: 1; }
+  .insta-likes { font-size: 13px; font-weight: 600; padding: 0 16px; margin-bottom: 6px; }
+  .insta-caption { font-size: 13px; line-height: 1.5; padding: 0 16px 6px; }
+  .insta-caption .user { font-weight: 600; }
+  .insta-hashtags { color: #00376b; font-size: 13px; }
+  .insta-comments { font-size: 13px; color: #8e8e8e; padding: 0 16px 6px; cursor: pointer; }
+  .insta-time { font-size: 10px; color: #8e8e8e; padding: 0 16px 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .insta-story-ring { border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433,#dc2743,#bc1888); }
+
+  /* ──────────────────────────────────
+     SMS STYLES
+  ────────────────────────────────── */
+  .sms-wrapper { padding: 24px; background: #1a1a1a; display: flex; justify-content: center; }
+  .phone-frame {
+    width: 300px;
+    background: #000;
+    border-radius: 40px;
+    padding: 16px;
+    border: 4px solid #2a2a2a;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .phone-notch {
+    width: 80px; height: 20px;
+    background: #000; border-radius: 10px;
+    margin: 0 auto 12px;
+    border: 2px solid #1a1a1a;
+  }
+  .phone-screen { background: #f2f2f7; border-radius: 28px; overflow: hidden; }
+  .phone-statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px 4px;
+    font-size: 11px; font-weight: 600; color: #000;
+    background: #f2f2f7;
+  }
+  .phone-msgs-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    background: #f2f2f7;
+    border-bottom: 1px solid #e5e5ea;
+  }
+  .sms-sender-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #34c759; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .sms-sender-name { font-size: 13px; font-weight: 600; color: #000; }
+  .sms-sender-num { font-size: 11px; color: #8e8e93; }
+  .phone-msgs-body { padding: 12px; background: #f2f2f7; min-height: 160px; }
+  .sms-bubble {
+    background: #34c759; color: white;
+    border-radius: 16px 16px 4px 16px;
+    padding: 10px 14px; font-size: 13px;
+    line-height: 1.5; max-width: 240px;
+    margin-left: auto;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .sms-time { font-size: 10px; color: #8e8e93; text-align: center; margin-top: 8px; }
+  .sms-dlt-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; color: #34c759; padding: 4px 8px;
+    background: rgba(52,199,89,0.1); border-radius: 4px;
+    margin-top: 8px; font-family: var(--mono);
+  }
+
+  /* ──────────────────────────────────
+     LINKEDIN STYLES
+  ────────────────────────────────── */
+  .linkedin-wrapper {
+    background: #f3f2ef;
+    padding: 20px;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+  }
+  .li-card {
+    background: white;
+    border: 1px solid #e0dfdc;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 550px;
+    margin: 0 auto;
+  }
+  .li-header { padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .li-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #0077b5, #00a0dc);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: white; font-size: 18px; flex-shrink: 0;
+  }
+  .li-name { font-size: 14px; font-weight: 600; color: #000; }
+  .li-handle { font-size: 12px; color: #666; line-height: 1.4; }
+  .li-time { font-size: 12px; color: #666; }
+  .li-more { margin-left: auto; color: #666; font-size: 20px; cursor: pointer; }
+  .li-follow { color: #0077b5; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #0077b5; border-radius: 16px; padding: 3px 14px; }
+  .li-body { padding: 0 16px 12px; font-size: 14px; line-height: 1.6; color: #1a1a1a; }
+  .li-body .hashtag { color: #0077b5; }
+  .li-image {
+    width: 100%; height: 200px;
+    background: linear-gradient(135deg, #0077b5 0%, #00a0dc 50%, #0e76a8 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: white; padding: 20px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .li-image::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1), transparent 60%);
+  }
+  .li-image-title { font-size: 20px; font-weight: 700; position: relative; z-index: 1; margin-bottom: 6px; }
+  .li-image-sub { font-size: 13px; opacity: 0.85; position: relative; z-index: 1; }
+  .li-image-brand { position: absolute; bottom: 12px; right: 16px; font-family: var(--mono); font-size: 10px; opacity: 0.6; }
+  .li-reactions { padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e0dfdc; border-bottom: 1px solid #e0dfdc; margin-top: 8px; }
+  .li-react-icons { display: flex; gap: -4px; }
+  .li-react-icon { width: 18px; height: 18px; border-radius: 50%; border: 1px solid white; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-left: -4px; }
+  .li-react-icon:first-child { margin-left: 0; }
+  .li-react-count { font-size: 12px; color: #666; margin-left: 6px; }
+  .li-comment-count { font-size: 12px; color: #666; }
+  .li-actions { display: flex; padding: 4px 8px; }
+  .li-action-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px; border-radius: 4px;
+    font-size: 13px; color: #666; font-weight: 600;
+    cursor: pointer; border: none; background: none;
+    transition: background 0.15s;
+  }
+  .li-action-btn:hover { background: #f3f2ef; }
+
+  /* ──────────────────────────────────
+     PUSH NOTIFICATION STYLE
+  ────────────────────────────────── */
+  .push-wrapper { padding: 20px; background: #1a1a1a; }
+  .push-notif {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+    max-width: 380px; margin: 0 auto;
+    animation: slideDown 0.5s ease;
+  }
+  @keyframes slideDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
+  .push-app-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, #2ecc71, #0e7a3c);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .push-title { font-size: 13px; font-weight: 700; color: white; margin-bottom: 2px; }
+  .push-body { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.4; }
+  .push-time { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+  .push-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .push-action { font-size: 12px; color: #2ecc71; font-weight: 600; cursor: pointer; }
+  .push-sep { font-size: 12px; color: rgba(255,255,255,0.2); }
+
+  /* ──────────────────────────────────
+     WHATSAPP STYLE
+  ────────────────────────────────── */
+  .wa-wrapper { background: #0b141a; padding: 20px; }
+  .wa-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #202c33; border-radius: 8px 8px 0 0; margin-bottom: 0; }
+  .wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: #00a884; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; }
+  .wa-name { font-size: 14px; font-weight: 600; color: #e9edef; }
+  .wa-sub { font-size: 12px; color: #8696a0; }
+  .wa-body {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%230b141a'/%3E%3C/svg%3E");
+    padding: 16px;
+    min-height: 120px;
+    border: 1px solid #202c33;
+    border-top: none;
+  }
+  .wa-bubble {
+    background: #202c33;
+    border-radius: 0 8px 8px 8px;
+    padding: 10px 14px;
+    max-width: 320px;
+    font-size: 13px; color: #e9edef; line-height: 1.5;
+  }
+  .wa-meta { display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 4px; }
+  .wa-time { font-size: 11px; color: #8696a0; }
+  .wa-ticks { color: #53bdeb; font-size: 14px; }
+  .wa-optin-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #00a884; margin-top: 10px; font-family: var(--mono); }
+
+  /* ──────────────────────────────────
+     EMAIL NEWSLETTER (inbox preview)
+  ────────────────────────────────── */
+  .email-channel-wrap { padding: 20px; background: #1c1c1e; }
+  .email-client-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; background: #2c2c2e; border-radius: 8px 8px 0 0;
+    font-family: var(--mono); font-size: 10px; color: var(--muted);
+    border: 1px solid #3a3a3c; border-bottom: none;
+  }
+  .email-letter {
+    background: #fff;
+    color: #1a1a1a;
+    border: 1px solid #3a3a3c;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    max-width: 560px;
+    margin: 0 auto;
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  .email-meta-row {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 12px; color: #555;
+  }
+  .email-from { font-weight: 600; color: #111; font-size: 13px; }
+  .email-to { font-size: 11px; color: #888; margin-top: 4px; }
+  .email-subject {
+    padding: 16px 18px 6px;
+    font-size: 18px; font-weight: 700; color: #111; line-height: 1.3;
+  }
+  .email-preheader {
+    padding: 0 18px 12px;
+    font-size: 13px; color: #666;
+    border-bottom: 1px solid #eee;
+  }
+  .email-body-html {
+    padding: 16px 18px 20px;
+    font-size: 14px; line-height: 1.65; color: #222;
+  }
+  .email-body-html p { margin-bottom: 12px; }
+  .email-cta-row {
+    padding: 0 18px 20px;
+  }
+  .email-cta-btn {
+    display: inline-block;
+    background: #6366f1;
+    color: #fff !important;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-size: 13px; font-weight: 600;
+    text-decoration: none;
+  }
+  .email-footer-legal {
+    padding: 12px 18px;
+    background: #f6f6f6;
+    font-size: 10px; color: #888;
+    border-top: 1px solid #eee;
+    font-family: var(--mono);
+  }
+
+  /* ── Counters animation ── */
+  @keyframes countUp { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+  .animated-count { animation: countUp 0.4s ease; }
+
+  /* ── Reject modal ── */
+  .reject-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .reject-overlay.visible { display: flex; }
+  .reject-modal {
+    background: var(--surface2); border: 1px solid var(--danger);
+    border-radius: 16px; padding: 32px; max-width: 360px; width: 90%;
+    text-align: center;
+  }
+  .reject-icon { font-size: 48px; margin-bottom: 16px; }
+  .reject-title { font-family: var(--serif); font-size: 22px; color: var(--danger); margin-bottom: 8px; }
+  .reject-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+  .btn-close { font-family: var(--mono); font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px 24px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-brand">
+      <div class="header-dot"></div>
+      <div>
+        <div class="header-title">GCN D2C Fintech Pipeline</div>
+        <div class="header-agent">Agent 8 — Publisher</div>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">RULE-BASED · NO LLM</div>
+  </div>
+
+  <!-- ── Human Approval Gate ── -->
+  <div class="gate-section" id="gate">
+    <div class="gate-label">▶ HUMAN APPROVAL GATE — AGENT 8</div>
+    <div class="gate-title" id="gate-title">Loading handoff from Agent 8…</div>
+    <p id="gate-desc" style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      Open this page after Agent 8 runs in the main orchestrator, or load a handoff from <code style="font-size:11px">localStorage</code> key <code style="font-size:11px">gcn_publisher_handoff</code>.
+    </p>
+
+    <div class="gate-meta" id="gate-meta"></div>
+
+    <div style="font-size:11px;color:var(--muted);margin-top:12px;font-family:var(--mono)">CHANNELS IN PACKAGE:</div>
+    <div class="gate-channels" id="gate-channels"></div>
+
+    <div class="gate-actions">
+      <button class="btn-approve" onclick="approve()">✓ Approve & Publish</button>
+      <button class="btn-reject" onclick="reject()">✕ Reject Campaign</button>
+    </div>
+  </div>
+
+  <!-- Publishing status -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-dot"></div>
+    <div class="status-text" id="statusText">Validating DLT & dispatching channels...</div>
+  </div>
+
+  <!-- ── Published Channels ── -->
+  <div class="channels-grid" id="channelsGrid">
+
+    <!-- ── BLOG ── -->
+    <div class="section-header" id="hdr-blog">
+      <div class="section-line"></div>
+      <div class="section-label">📄 BLOG CHANNEL</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-blog">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill blog" style="font-size:10px">Blog</span>
+          WordPress / Headless CMS
+        </div>
+        <div class="ch-status-ok">✓ QUEUED_FOR_CMS</div>
+      </div>
+      <div class="seo-bar" id="blog-seo-bar">
+        <span>✓ H1 Present</span>
+        <span>✓ Meta Description Ready</span>
+        <span>✓ Schema Stub</span>
+        <span id="blog-schedule-pill">Scheduled: —</span>
+      </div>
+      <div class="ch-content">
+        <div class="blog-wrapper">
+          <div class="blog-category" id="blog-category">🏦 GCN Fintech</div>
+          <h1 class="blog-h1" id="blog-h1">—</h1>
+          <div class="blog-meta" id="blog-meta">
+            <span>✍️ GCN Content Team</span>
+            <span>📅 Ready to publish</span>
+          </div>
+          <div class="blog-hero" id="blog-hero">GCN ✦</div>
+          <div class="blog-body" id="blog-body"></div>
+          <div class="blog-tags" id="blog-tags"></div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="blog-views">0</div><div class="metric-lbl">Simulated Views</div></div>
+        <div class="metric"><div class="metric-val" id="blog-reads">0</div><div class="metric-lbl">Avg Read Time</div></div>
+        <div class="metric"><div class="metric-val" id="blog-ctr">0%</div><div class="metric-lbl">CTA Click Rate</div></div>
+        <div class="metric"><div class="metric-val" id="blog-shares">0</div><div class="metric-lbl">Social Shares</div></div>
+      </div>
+    </div>
+
+    <!-- ── INSTAGRAM ── -->
+    <div class="section-header" id="hdr-insta">
+      <div class="section-line"></div>
+      <div class="section-label">📸 INSTAGRAM CHANNEL</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-insta">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill insta" style="font-size:10px">Instagram</span>
+          Caption + Image Placeholder
+        </div>
+        <div class="ch-status-ok">⏱ SCHEDULED — 8:00 AM IST</div>
+      </div>
+      <div class="ch-content" style="display:flex;justify-content:center;padding:20px;background:#fafafa">
+        <div class="insta-wrapper">
+          <div class="insta-top">
+            <div class="insta-user">
+              <div class="insta-story-ring">
+                <div class="insta-avatar">G</div>
+              </div>
+              <div>
+                <div class="insta-username">gcn.fintech</div>
+                <div class="insta-location">Mumbai, Maharashtra</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="li-follow" style="border-color:#e6683c;color:#e6683c">Follow</div>
+              <div class="insta-more">···</div>
+            </div>
+          </div>
+          <div class="insta-image">
+            <div class="insta-image-text">
+              <div class="insta-image-headline" id="insta-image-headline">—</div>
+              <div class="insta-image-sub" id="insta-image-sub"></div>
+            </div>
+          </div>
+          <div class="insta-actions">
+            <button class="insta-btn">❤️</button>
+            <button class="insta-btn">💬</button>
+            <button class="insta-btn">✈️</button>
+            <div class="insta-spacer"></div>
+            <button class="insta-btn">🔖</button>
+          </div>
+          <div class="insta-likes" id="insta-likes">0 likes</div>
+          <div class="insta-caption" id="insta-caption">
+            <span class="user">gcn.fintech</span> <span id="insta-caption-text">—</span> <span class="insta-hashtags" id="insta-hashtags"></span>
+          </div>
+          <div class="insta-comments" id="insta-comments">View all 0 comments</div>
+          <div class="insta-time" id="insta-time">Just now</div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="ig-reach">0</div><div class="metric-lbl">Reach</div></div>
+        <div class="metric"><div class="metric-val" id="ig-impressions">0</div><div class="metric-lbl">Impressions</div></div>
+        <div class="metric"><div class="metric-val" id="ig-saves">0</div><div class="metric-lbl">Saves</div></div>
+        <div class="metric"><div class="metric-val" id="ig-engage">0%</div><div class="metric-lbl">Engagement Rate</div></div>
+      </div>
+    </div>
+
+    <!-- ── SMS ── -->
+    <div class="section-header" id="hdr-sms">
+      <div class="section-line"></div>
+      <div class="section-label">💬 SMS CHANNEL — TRAI DLT VALIDATED</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-sms">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill sms" style="font-size:10px">SMS</span>
+          Sender: GCNUPI ✓ DLT Registered
+        </div>
+        <div class="ch-status-ok">✓ DISPATCHED</div>
+      </div>
+      <div class="ch-content">
+        <div id="sms-meta-row" style="display:flex;gap:12px;padding:16px;background:var(--surface2);font-family:var(--mono);font-size:10px;flex-wrap:wrap"></div>
+        <div class="sms-wrapper">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-statusbar">
+                <span>9:41</span>
+                <span>●●● ▶ 🔋</span>
+              </div>
+              <div class="phone-msgs-header">
+                <div class="sms-sender-icon">G</div>
+                <div>
+                  <div class="sms-sender-name">GCNUPI</div>
+                  <div class="sms-sender-num">Promotional · GCN Fintech</div>
+                </div>
+              </div>
+              <div class="phone-msgs-body">
+                <div class="sms-bubble" id="sms-bubble">—</div>
+                <div class="sms-time">Today, 8:47 AM</div>
+                <div class="sms-dlt-badge">✓ TRAI DLT Template Verified</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="sms-sent">0</div><div class="metric-lbl">Sent</div></div>
+        <div class="metric"><div class="metric-val" id="sms-delivered">0%</div><div class="metric-lbl">Delivery Rate</div></div>
+        <div class="metric"><div class="metric-val" id="sms-clicks">0</div><div class="metric-lbl">Link Clicks</div></div>
+        <div class="metric"><div class="metric-val" id="sms-optout">0</div><div class="metric-lbl">Opt-outs</div></div>
+      </div>
+    </div>
+
+    <!-- ── LINKEDIN ── -->
+    <div class="section-header" id="hdr-linkedin">
+      <div class="section-line"></div>
+      <div class="section-label">💼 LINKEDIN CHANNEL</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-linkedin">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill linkedin" style="font-size:10px">LinkedIn</span>
+          Company Page · B2B + Professional Reach
+        </div>
+        <div class="ch-status-ok">✓ QUEUED</div>
+      </div>
+      <div class="ch-content">
+        <div class="linkedin-wrapper">
+          <div class="li-card">
+            <div class="li-header">
+              <div class="li-avatar">G</div>
+              <div>
+                <div class="li-name">GCN Fintech</div>
+                <div class="li-handle">India's Smart Payment Layer · 48,200 followers</div>
+                <div class="li-time">Now · 🌐</div>
+              </div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+                <div class="li-follow">+ Follow</div>
+                <div class="li-more">···</div>
+              </div>
+            </div>
+            <div class="li-body" id="li-body"></div>
+            <div class="li-image">
+              <div class="li-image-title" id="li-image-title">—</div>
+              <div class="li-image-sub" id="li-image-sub">—</div>
+              <div class="li-image-brand">GCN FINTECH ©</div>
+            </div>
+            <div class="li-reactions">
+              <div style="display:flex;align-items:center">
+                <div class="li-react-icons">
+                  <div class="li-react-icon" style="background:#0077b5">👍</div>
+                  <div class="li-react-icon" style="background:#e7a33e">❤️</div>
+                  <div class="li-react-icon" style="background:#6dae4f">🎉</div>
+                </div>
+                <div class="li-react-count" id="li-reactions">0</div>
+              </div>
+              <div class="li-comment-count" id="li-comments">0 comments</div>
+            </div>
+            <div class="li-actions">
+              <button class="li-action-btn">👍 Like</button>
+              <button class="li-action-btn">💬 Comment</button>
+              <button class="li-action-btn">🔁 Repost</button>
+              <button class="li-action-btn">✉️ Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="li-impressions">0</div><div class="metric-lbl">Impressions</div></div>
+        <div class="metric"><div class="metric-val" id="li-reach">0</div><div class="metric-lbl">Unique Views</div></div>
+        <div class="metric"><div class="metric-val" id="li-engage">0%</div><div class="metric-lbl">Engagement Rate</div></div>
+        <div class="metric"><div class="metric-val" id="li-clicks">0</div><div class="metric-lbl">Link Clicks</div></div>
+      </div>
+    </div>
+
+    <!-- ── EMAIL NEWSLETTER ── -->
+    <div class="section-header" id="hdr-email">
+      <div class="section-line"></div>
+      <div class="section-label">✉️ EMAIL NEWSLETTER</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-email">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill email" style="font-size:10px">Email</span>
+          ESP · Double opt-in · CAN-SPAM footer
+        </div>
+        <div class="ch-status-ok">✓ QUEUED</div>
+      </div>
+      <div class="ch-content">
+        <div id="email-meta-row" style="display:flex;gap:12px;padding:16px;background:var(--surface2);font-family:var(--mono);font-size:10px;flex-wrap:wrap"></div>
+        <div class="email-channel-wrap">
+          <div class="email-client-bar">📥 Inbox preview · Promotions</div>
+          <div class="email-letter">
+            <div class="email-meta-row">
+              <div class="email-from" id="email-from">GCN Fintech</div>
+              <div class="email-to" id="email-from-addr">newsletter@gcnfintech.com</div>
+            </div>
+            <div class="email-subject" id="email-subject">—</div>
+            <div class="email-preheader" id="email-preheader"></div>
+            <div class="email-body-html" id="email-body"></div>
+            <div class="email-cta-row" id="email-cta-wrap"></div>
+            <div class="email-footer-legal" id="email-legal">You’re receiving this because you subscribed to GCN updates. <a href="#" style="color:#6366f1">Unsubscribe</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="email-sent">0</div><div class="metric-lbl">Sent</div></div>
+        <div class="metric"><div class="metric-val" id="email-open">0%</div><div class="metric-lbl">Open Rate</div></div>
+        <div class="metric"><div class="metric-val" id="email-click">0%</div><div class="metric-lbl">Click Rate</div></div>
+        <div class="metric"><div class="metric-val" id="email-unsub">0</div><div class="metric-lbl">Unsubs</div></div>
+      </div>
+    </div>
+
+    <!-- ── PUSH ── -->
+    <div class="section-header" id="hdr-push">
+      <div class="section-line"></div>
+      <div class="section-label">🔔 PUSH NOTIFICATION CHANNEL</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-push">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill push" style="font-size:10px">Push</span>
+          FCM + APNs · Title 50 · Body 100
+        </div>
+        <div class="ch-status-ok">✓ QUEUED</div>
+      </div>
+      <div class="ch-content">
+        <div id="push-meta-row" style="display:flex;gap:12px;padding:16px;background:var(--surface2);font-family:var(--mono);font-size:10px;flex-wrap:wrap"></div>
+        <div class="push-wrapper">
+          <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:12px;font-family:var(--mono);letter-spacing:0.1em">LOCK SCREEN PREVIEW</div>
+          <div class="push-notif">
+            <div class="push-app-icon">💰</div>
+            <div>
+              <div class="push-title" id="push-title">—</div>
+              <div class="push-body" id="push-body">—</div>
+              <div class="push-time" id="push-time">now</div>
+              <div class="push-actions">
+                <div class="push-action" id="push-cta-primary">Open</div>
+                <div class="push-sep">|</div>
+                <div class="push-action" id="push-cta-secondary">Learn More</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="push-sent">0</div><div class="metric-lbl">Notifications Sent</div></div>
+        <div class="metric"><div class="metric-val" id="push-open">0%</div><div class="metric-lbl">Open Rate</div></div>
+        <div class="metric"><div class="metric-val" id="push-tap">0%</div><div class="metric-lbl">Tap-through Rate</div></div>
+        <div class="metric"><div class="metric-val" id="push-dismiss">0</div><div class="metric-lbl">Dismissed</div></div>
+      </div>
+    </div>
+
+    <!-- ── WHATSAPP ── -->
+    <div class="section-header" id="hdr-wa">
+      <div class="section-line"></div>
+      <div class="section-label">💬 WHATSAPP CHANNEL</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="channel-frame" id="frame-wa">
+      <div class="ch-header">
+        <div class="ch-name">
+          <span class="ch-pill" style="font-size:10px;color:#25d366;border-color:#064e28;background:rgba(6,78,40,0.2)">WhatsApp</span>
+          Business API · Opt-in Verified
+        </div>
+        <div class="ch-status-ok">✓ QUEUED</div>
+      </div>
+      <div class="ch-content">
+        <div id="wa-meta-row" style="display:flex;gap:12px;padding:16px;background:var(--surface2);font-family:var(--mono);font-size:10px;flex-wrap:wrap"></div>
+        <div class="wa-wrapper">
+          <div class="wa-header">
+            <div class="wa-avatar">G</div>
+            <div>
+              <div class="wa-name">GCN Fintech ✓</div>
+              <div class="wa-sub">Business Account · Online</div>
+            </div>
+          </div>
+          <div class="wa-body">
+            <div class="wa-bubble" id="wa-bubble"></div>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric"><div class="metric-val" id="wa-sent">0</div><div class="metric-lbl">Messages Sent</div></div>
+        <div class="metric"><div class="metric-val" id="wa-read">0%</div><div class="metric-lbl">Read Rate</div></div>
+        <div class="metric"><div class="metric-val" id="wa-reply">0</div><div class="metric-lbl">Replies</div></div>
+        <div class="metric"><div class="metric-val" id="wa-conv">0%</div><div class="metric-lbl">Conversion Rate</div></div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="section-header" style="margin-top:40px">
+      <div class="section-line"></div>
+      <div class="section-label">📊 CAMPAIGN SUMMARY — AGENT 9 HANDOFF READY</div>
+      <div class="section-line"></div>
+    </div>
+    <div id="summary-card" style="
+      background: linear-gradient(135deg, #0a2015 0%, #0e2818 100%);
+      border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: 12px; padding: 24px 28px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 20px;
+    ">
+      <div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">CHANNELS DISPATCHED</div><div id="summary-dispatched" style="font-family:var(--mono);font-size:24px;color:var(--accent2)">—</div></div>
+      <div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">DLT VIOLATIONS</div><div style="font-family:var(--mono);font-size:24px;color:var(--accent)">0</div></div>
+      <div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">TOTAL REACH (SIM)</div><div id="total-reach" style="font-family:var(--mono);font-size:24px;color:var(--accent2)">0</div></div>
+      <div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">AUDIT LOGGED</div><div style="font-family:var(--mono);font-size:24px;color:var(--accent)">✓</div></div>
+      <div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">NEXT AGENT</div><div style="font-family:var(--mono);font-size:16px;color:var(--accent2)">Agent 9 →</div></div>
+    </div>
+
+  </div><!-- /channels-grid -->
+
+</div><!-- /shell -->
+
+<!-- Reject modal -->
+<div class="reject-overlay" id="rejectOverlay">
+  <div class="reject-modal">
+    <div class="reject-icon">⛔</div>
+    <div class="reject-title">Campaign Rejected</div>
+    <div class="reject-sub">This campaign package has been rejected by the human reviewer. No content will be dispatched. Audit log updated. Agent 9 notified of block.</div>
+    <button class="btn-close" onclick="document.getElementById('rejectOverlay').classList.remove('visible')">Close</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const UI_CHANNEL = {
+    Blog: { hdr: 'hdr-blog', frame: 'frame-blog', label: '📄 Blog' },
+    Instagram: { hdr: 'hdr-insta', frame: 'frame-insta', label: '📸 Instagram' },
+    SMS: { hdr: 'hdr-sms', frame: 'frame-sms', label: '💬 SMS' },
+    LinkedIn: { hdr: 'hdr-linkedin', frame: 'frame-linkedin', label: '💼 LinkedIn' },
+    Email: { hdr: 'hdr-email', frame: 'frame-email', label: '✉️ Email' },
+    'Push Notification': { hdr: 'hdr-push', frame: 'frame-push', label: '🔔 Push' },
+    WhatsApp: { hdr: 'hdr-wa', frame: 'frame-wa', label: '💬 WhatsApp' },
+  };
+
+  const DISPATCH_ORDER = [
+    'Blog',
+    'Instagram',
+    'SMS',
+    'LinkedIn',
+    'Email',
+    'Push Notification',
+    'WhatsApp',
+  ];
+
+  const SIM_METRICS = {
+    Blog: { views: 12847, readsLabel: '3m 42s', ctr: 7.3, shares: 284 },
+    Instagram: { reach: 48200, impressions: 71600, saves: 1840, engage: 4.8 },
+    SMS: { sent: 84200, delivered: 97.8, clicks: 6180, optout: 42 },
+    LinkedIn: { impressions: 31400, reach: 18700, engage: 3.2, clicks: 940 },
+    Email: { sent: 45200, open: 26.4, click: 4.2, unsub: 18 },
+    'Push Notification': { sent: 110000, open: 22.4, tap: 8.7, dismiss: 12400 },
+    WhatsApp: { sent: 28400, read: 91.2, reply: 3120, conv: 12.4 },
+  };
+
+  window.__gcnPublisherHandoff = null;
+  let analyticsStore = [];
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function stripBlogArtifacts(raw) {
+    return String(raw || '')
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .trim();
+  }
+
+  function parsePushFromFormatted(str) {
+    const lines = String(str || '').split('\n');
+    let title = '';
+    let body = '';
+    let cta = 'Learn More';
+    for (const line of lines) {
+      const t = line.match(/^TITLE:\s*(.+)$/i);
+      const b = line.match(/^BODY:\s*(.+)$/i);
+      const c = line.match(/^CTA:\s*(.+)$/i);
+      if (t) title = t[1].trim();
+      else if (b) body = b[1].trim();
+      else if (c) cta = c[1].trim();
+    }
+    if (!title && !body) {
+      title = 'GCN notification';
+      body = String(str || '').slice(0, 100);
+    }
+    return { title, body, cta };
+  }
+
+  function blogPlainToHtml(text) {
+    const t = stripBlogArtifacts(text);
+    const paras = t.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+    if (!paras.length) return '<p>—</p>';
+    return paras
+      .map(p => {
+        const safe = escapeHtml(p).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        return `<p>${safe}</p>`;
+      })
+      .join('');
+  }
+
+  function hydrateGate(handoff) {
+    const pkgs = handoff.formatted_packages || {};
+    const keys = Object.keys(pkgs);
+    const product = handoff.product_category || 'GCN Fintech';
+    const intent = handoff.campaign_intent || 'Campaign';
+    const persona = handoff.selected_persona || '—';
+    const segment = handoff.consumer_segment || '—';
+    document.getElementById('gate-title').textContent =
+      keys.length ? `${product} — ${intent}` : 'No formatted packages in handoff';
+
+    document.getElementById('gate-desc').textContent =
+      keys.length
+        ? 'Multi-channel package produced by Agents 3→7 and validated by Agent 8. Approve to simulate dispatch and record analytics for Agent 9.'
+        : 'Run the main pipeline through Agent 8, or paste JSON into the console and call renderPublisherUI(payload).';
+
+    const meta = document.getElementById('gate-meta');
+    meta.innerHTML = [
+      `PERSONA: ${persona}`,
+      `SEGMENT: ${segment}`,
+      `PRODUCT: ${product}`,
+      `INTENT: ${intent}`,
+      keys.includes('SMS')
+        ? `DLT: ${pkgs.SMS?.meta?.dltTemplate || 'GCNFIN'}`
+        : null,
+    ]
+      .filter(Boolean)
+      .map(t => `<span class="gate-tag">${escapeHtml(t)}</span>`)
+      .join('');
+
+    const chEl = document.getElementById('gate-channels');
+    chEl.innerHTML = keys
+      .map(k => {
+        const slug = k.toLowerCase().replace(/\s+/g, '');
+        const pill =
+          k === 'Blog'
+            ? 'blog'
+            : k === 'Instagram'
+              ? 'insta'
+              : k === 'SMS'
+                ? 'sms'
+                : k === 'LinkedIn'
+                  ? 'linkedin'
+                  : k === 'Push Notification'
+                    ? 'push'
+                    : k === 'Email'
+                      ? 'email'
+                      : '';
+        const cls = pill ? `ch-pill ${pill}` : 'ch-pill';
+        return `<span class="${cls}">${escapeHtml(k)}</span>`;
+      })
+      .join('');
+
+    const n = keys.length;
+    const sd = document.getElementById('summary-dispatched');
+    if (sd) sd.textContent = n ? `${n}/${n}` : '0/0';
+  }
+
+  function setFrameStatus(frameId, text) {
+    const fr = document.getElementById(frameId);
+    if (!fr) return;
+    const st = fr.querySelector('.ch-status-ok');
+    if (st) st.textContent = text;
+  }
+
+  function applyPublishStatuses(handoff) {
+    const pr = handoff.publish_results || {};
+    for (const ch of Object.keys(pr)) {
+      const ui = UI_CHANNEL[ch];
+      if (!ui) continue;
+      const r = pr[ch];
+      const msg =
+        r.status === 'BLOCKED'
+          ? `✕ ${r.blockDetail || 'BLOCKED'}`
+          : r.status === 'SCHEDULED'
+            ? `⏱ ${r.scheduledTime || 'SCHEDULED'}`
+            : r.status === 'CMS_QUEUE'
+              ? `✓ ${r.status} · ${r.scheduledTime || ''}`
+              : r.status === 'ESP_QUEUE'
+                ? `✓ ${r.status} · ${r.scheduledTime || ''}`
+                : `✓ ${r.status || 'QUEUED'}`;
+      setFrameStatus(ui.frame, msg);
+    }
+  }
+
+  function toggleChannelBlocks(activeKeys) {
+    const active = new Set(activeKeys);
+    let syntheticLinkedIn = false;
+    if (!active.has('LinkedIn') && active.has('Blog')) {
+      active.add('LinkedIn');
+      syntheticLinkedIn = true;
+    }
+
+    for (const [ch, u] of Object.entries(UI_CHANNEL)) {
+      const on = active.has(ch);
+      const hdr = document.getElementById(u.hdr);
+      const fr = document.getElementById(u.frame);
+      const disp = on ? '' : 'none';
+      if (hdr) hdr.style.display = disp;
+      if (fr) {
+        fr.style.display = disp;
+        if (ch === 'LinkedIn' && syntheticLinkedIn && on) {
+          setFrameStatus(u.frame, '○ SYNTHESIZED PREVIEW (not in channel mix)');
+        }
+      }
+    }
+    return { syntheticLinkedIn };
+  }
+
+  function fillBlog(pkg, handoff, optimalWindow) {
+    const raw = pkg.formatted || '';
+    const plain = stripBlogArtifacts(raw);
+    const h1 =
+      pkg.display?.['H1 Title'] ||
+      plain.split('\n')[0]?.replace(/^#+\s*/, '').trim() ||
+      'Blog post';
+    document.getElementById('blog-h1').textContent = h1;
+    document.getElementById('blog-category').textContent = `🏦 ${handoff.product_category || 'GCN'} · ${handoff.selected_persona || ''}`;
+    document.getElementById('blog-hero').textContent = (h1 || 'GCN').slice(0, 28) + ' ✦';
+    document.getElementById('blog-body').innerHTML = blogPlainToHtml(raw);
+    document.getElementById('blog-schedule-pill').textContent = `Scheduled: ${optimalWindow}`;
+    const wc = pkg.meta?.wordCount;
+    document.getElementById('blog-meta').innerHTML = `
+      <span>✍️ GCN Content · ${escapeHtml(pkg.persona || '')}</span>
+      <span>📅 Ready</span>
+      ${wc ? `<span>⏱ ~${wc} words</span>` : ''}
+    `;
+    const hashTags = (plain.match(/#\w+/g) || []).slice(0, 8);
+    document.getElementById('blog-tags').innerHTML = hashTags.length
+      ? hashTags.map(t => `<span class="blog-tag">${escapeHtml(t)}</span>`).join('')
+      : '<span class="blog-tag">#GCN</span>';
+  }
+
+  function fillInstagram(pkg, optimalWindow) {
+    const d = pkg.display || {};
+    const hook = d.Hook || '';
+    const copy = d.Copy || '';
+    const cta = d.CTA || '';
+    const tags = d.Hashtags || (pkg.formatted || '').split('\n').filter(l => l.trim().startsWith('#')).join(' ');
+    document.getElementById('insta-image-headline').innerHTML = escapeHtml(hook || 'Campaign').replace(/\n/g, '<br>');
+    document.getElementById('insta-image-sub').textContent = cta || copy.slice(0, 80) || '';
+    document.getElementById('insta-caption-text').textContent = [hook, copy, cta].filter(Boolean).join(' ');
+    document.getElementById('insta-hashtags').textContent = tags || '';
+    setFrameStatus('frame-insta', `⏱ SCHEDULED — ${optimalWindow}`);
+  }
+
+  function fillSMS(pkg) {
+    document.getElementById('sms-bubble').textContent = pkg.formatted || '—';
+    const meta = pkg.meta || {};
+    const sender = meta.dltTemplate || 'GCNFIN';
+    const row = document.getElementById('sms-meta-row');
+    row.innerHTML = [
+      `DLT Sender: ${sender} ✓`,
+      `Characters: ${meta.charCount != null ? meta.charCount : (pkg.formatted || '').length}/160 ✓`,
+      meta.optOutPresent !== false ? 'Opt-out: STOP / 1909 ✓' : 'Opt-out: check',
+    ]
+      .map(s => `<span style="color:var(--accent)">${escapeHtml(s)}</span>`)
+      .join('');
+  }
+
+  function fillLinkedIn(pkg) {
+    const html = blogPlainToHtml(pkg.formatted || pkg.syntheticBody || '');
+    document.getElementById('li-body').innerHTML = html;
+    const t = pkg.display?.title || pkg.title || 'Professional update';
+    const sub = pkg.subtitle || '';
+    document.getElementById('li-image-title').textContent = t;
+    document.getElementById('li-image-sub').textContent = sub;
+  }
+
+  function fillEmail(pkg, optimalWindow) {
+    const d = pkg.display || {};
+    const subject = d.Subject || 'GCN Newsletter';
+    const pre = d.Preheader || '';
+    const cta = d.CTA || 'View offer';
+    const raw = stripBlogArtifacts(pkg.formatted || '');
+    const bodyLines = raw.split('\n').filter(l => !/^subject\s*:/i.test(l) && !/^preheader\s*:/i.test(l) && !/^cta\s*:/i.test(l));
+    const bodyText = bodyLines.join('\n\n').trim() || raw;
+    document.getElementById('email-subject').textContent = subject;
+    document.getElementById('email-preheader').textContent = pre || '(Preheader — inbox snippet)';
+    document.getElementById('email-body').innerHTML = blogPlainToHtml(bodyText) || '<p>—</p>';
+    document.getElementById('email-cta-wrap').innerHTML = `<a class="email-cta-btn" href="#">${escapeHtml(cta)}</a>`;
+    const subjLen = subject.length;
+    document.getElementById('email-meta-row').innerHTML = [
+      `Subject: ${subjLen}/78 ✓`,
+      'List: opt-in ✓',
+      `Send window: ${optimalWindow}`,
+    ]
+      .map(s => `<span style="color:var(--accent)">${escapeHtml(s)}</span>`)
+      .join('');
+    setFrameStatus('frame-email', `✓ ESP_QUEUE · ${optimalWindow}`);
+  }
+
+  function fillPush(pkg, optimalWindow) {
+    const parsed = parsePushFromFormatted(pkg.formatted);
+    document.getElementById('push-title').textContent = parsed.title;
+    document.getElementById('push-body').textContent = parsed.body;
+    document.getElementById('push-cta-primary').textContent = parsed.cta || 'Open';
+    const row = document.getElementById('push-meta-row');
+    const tl = parsed.title.length;
+    const bl = parsed.body.length;
+    row.innerHTML = [
+      'Platform: FCM + APNs ✓',
+      `Title: ${tl}/50 ✓`,
+      `Body: ${bl}/100 ✓`,
+      `Schedule: ${optimalWindow}`,
+    ]
+      .map(s => `<span style="color:var(--accent)">${escapeHtml(s)}</span>`)
+      .join('');
+  }
+
+  function fillWhatsApp(pkg, optimalWindow) {
+    const txt = escapeHtml(pkg.formatted || '—').replace(/\n/g, '<br>');
+    document.getElementById('wa-bubble').innerHTML =
+      `${txt}<div class="wa-meta"><div class="wa-time">Now</div><div class="wa-ticks">✓✓</div></div><div class="wa-optin-badge">✓ Opt-in · WhatsApp Business API</div>`;
+    document.getElementById('wa-meta-row').innerHTML = [
+      'Opt-in: ✓ Verified (CRM)',
+      `Schedule: ${optimalWindow}`,
+    ]
+      .map(s => `<span style="color:#25d366">${escapeHtml(s)}</span>`)
+      .join('');
+  }
+
+  function optimalWindowFromHandoff(handoff) {
+    const map = {
+      'Gen Z (18-25)': '7:00 PM – 9:00 PM IST',
+      'Millennial (26-38)': '8:00 AM – 10:00 AM IST',
+      'Bharat (Tier 2/3 vernacular)': '6:00 PM – 8:00 PM IST',
+      Mixed: '12:00 PM – 2:00 PM IST',
+    };
+    return map[handoff.consumer_segment] || '8:00 AM – 10:00 AM IST';
+  }
+
+  window.renderPublisherUI = function renderPublisherUI(a8Output) {
+    if (!a8Output || !a8Output.formatted_packages) return;
+    window.__gcnPublisherHandoff = a8Output;
+    analyticsStore = [];
+
+    const packages = a8Output.formatted_packages;
+    const keys = Object.keys(packages);
+    const optWin = optimalWindowFromHandoff(a8Output);
+
+    hydrateGate(a8Output);
+    const { syntheticLinkedIn } = toggleChannelBlocks(keys);
+
+    const blogPkg = packages.Blog;
+
+    for (const [channel, pkg] of Object.entries(packages)) {
+      if (channel === 'Blog') fillBlog(pkg, a8Output, optWin);
+      else if (channel === 'Instagram') fillInstagram(pkg, optWin);
+      else if (channel === 'SMS') fillSMS(pkg);
+      else if (channel === 'LinkedIn') fillLinkedIn(pkg);
+      else if (channel === 'Email') fillEmail(pkg, optWin);
+      else if (channel === 'Push Notification') fillPush(pkg, optWin);
+      else if (channel === 'WhatsApp') fillWhatsApp(pkg, optWin);
+    }
+
+    if (syntheticLinkedIn && blogPkg) {
+      const plain = stripBlogArtifacts(blogPkg.formatted || '');
+      const title = blogPkg.display?.['H1 Title'] || plain.split('\n')[0]?.slice(0, 60) || 'GCN update';
+      const rest = plain.split('\n').slice(1).join('\n\n').slice(0, 1200);
+      fillLinkedIn({
+        formatted: rest,
+        display: { title, subtitle: a8Output.product_category || '' },
+        syntheticBody: rest,
+      });
+    }
+
+    applyPublishStatuses(a8Output);
+  };
+
+  function animateCount(id, target, suffix = '', duration = 1800, isFloat = false) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = (isFloat ? start.toFixed(1) : Math.floor(start).toLocaleString()) + suffix;
+      if (start >= target) {
+        el.textContent = (isFloat ? target.toFixed(1) : target.toLocaleString()) + suffix;
+        clearInterval(timer);
+      }
+    }, 16);
+  }
+
+  function activeDispatchKeys(handoff) {
+    const keys = Object.keys(handoff?.formatted_packages || {});
+    const set = new Set(keys);
+    if (!set.has('LinkedIn') && set.has('Blog')) set.add('LinkedIn');
+    return DISPATCH_ORDER.filter(k => set.has(k));
+  }
+
+  function persistAnalyticsForAgent9(handoff, metricsPayload) {
+    const runId =
+      handoff?.run_id ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('gcn_run_id') : '') ||
+      '';
+    const record = {
+      runId,
+      analytics: metricsPayload,
+      captured_at: Date.now(),
+    };
+    try {
+      localStorage.setItem('gcn_publisher_analytics', JSON.stringify(record));
+    } catch (e) {
+      console.warn('[Publisher UI] analytics not saved', e);
+    }
+    window.dispatchEvent(new CustomEvent('gcn-publisher-analytics', { detail: record }));
+  }
+
+  function persistPublisherSimComplete(handoff, dispatchedChannelKeys) {
+    const runId =
+      handoff?.run_id ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('gcn_run_id') : '') ||
+      '';
+    try {
+      localStorage.setItem(
+        'gcn_publisher_sim_complete',
+        JSON.stringify({
+          runId,
+          channels: dispatchedChannelKeys,
+          completed_at: Date.now(),
+        })
+      );
+    } catch (e) {
+      console.warn('[Publisher UI] sim-complete flag not saved', e);
+    }
+    window.dispatchEvent(new CustomEvent('gcn-publisher-sim-complete', { detail: { runId, channels: dispatchedChannelKeys } }));
+  }
+
+  function buildAgent9Analytics(handoff, keys) {
+    const out = [];
+    for (const ch of keys) {
+      const m = SIM_METRICS[ch];
+      if (!m) continue;
+      if (ch === 'Blog') {
+        out.push({ channel: ch, impressions: m.views, ctr: m.ctr / 100 });
+      } else if (ch === 'Instagram') {
+        out.push({ channel: ch, impressions: m.impressions, ctr: m.engage / 100 });
+      } else if (ch === 'SMS') {
+        out.push({ channel: ch, impressions: m.sent, ctr: m.clicks / m.sent });
+      } else if (ch === 'LinkedIn') {
+        out.push({ channel: ch, impressions: m.impressions, ctr: m.engage / 100 });
+      } else if (ch === 'Email') {
+        out.push({ channel: ch, impressions: m.sent, ctr: m.click / 100 });
+      } else if (ch === 'Push Notification') {
+        out.push({ channel: ch, impressions: m.sent, ctr: m.tap / 100 });
+      } else if (ch === 'WhatsApp') {
+        out.push({ channel: ch, impressions: m.sent, ctr: m.conv / 100 });
+      }
+    }
+    const totalReach = out.reduce((s, x) => s + (x.impressions || 0), 0);
+    return { series: out, totalReach };
+  }
+
+  window.approve = async function approve() {
+    const handoff = window.__gcnPublisherHandoff;
+    if (!handoff || !Object.keys(handoff.formatted_packages || {}).length) {
+      alert('No Agent 8 handoff loaded. Run the main pipeline through Agent 8 (or ensure gcn_publisher_handoff is in localStorage), then click Approve again.');
+      return;
+    }
+    const keys = activeDispatchKeys(handoff);
+    const runAnimations = ch => keys.includes(ch);
+
+    const gate = document.getElementById('gate');
+    gate.style.opacity = '0.4';
+    gate.style.pointerEvents = 'none';
+    gate.querySelector('.gate-label').textContent = '✓ APPROVED — DISPATCHING…';
+    gate.style.borderLeftColor = 'var(--accent)';
+
+    const bar = document.getElementById('statusBar');
+    bar.classList.add('visible');
+    const statusTextEl = bar.querySelector('.status-text') || document.getElementById('statusText');
+
+    document.getElementById('channelsGrid').classList.add('visible');
+
+    const statusEl = document.getElementById('statusText');
+    const msgFor = ch => {
+      const map = {
+        Blog: 'Blog queuing for CMS…',
+        Instagram: 'Instagram scheduled for optimal window…',
+        SMS: 'SMS dispatched — DLT audit…',
+        LinkedIn: 'LinkedIn queued — B2B reach…',
+        Email: 'Email newsletter — ESP queued…',
+        'Push Notification': 'Push FCM/APNs validated…',
+        WhatsApp: 'WhatsApp opt-in queue…',
+      };
+      return map[ch] || `${ch} queued…`;
+    };
+
+    for (let i = 0; i < keys.length; i++) {
+      const ch = keys[i];
+      const ui = UI_CHANNEL[ch];
+      if (statusEl) statusEl.textContent = msgFor(ch);
+      await delay(500 + i * 100);
+      if (ui) document.getElementById(ui.frame).classList.add('revealed');
+    }
+
+    await delay(600);
+    if (statusEl) statusEl.textContent = '✓ Channels dispatched. Handing analytics to Agent 9…';
+
+    if (runAnimations('Blog')) {
+      animateCount('blog-views', SIM_METRICS.Blog.views);
+      setTimeout(() => {
+        const el = document.getElementById('blog-reads');
+        if (el) el.textContent = SIM_METRICS.Blog.readsLabel;
+      }, 1800);
+      animateCount('blog-ctr', SIM_METRICS.Blog.ctr, '%', 1800, true);
+      animateCount('blog-shares', SIM_METRICS.Blog.shares);
+    }
+
+    await delay(200);
+    if (runAnimations('Instagram')) {
+      const im = SIM_METRICS.Instagram;
+      animateCount('ig-reach', im.reach);
+      animateCount('ig-impressions', im.impressions);
+      animateCount('ig-saves', im.saves);
+      animateCount('ig-engage', im.engage, '%', 1800, true);
+      let likes = 0;
+      const likeTimer = setInterval(() => {
+        likes += Math.floor(Math.random() * 8 + 2);
+        const el = document.getElementById('insta-likes');
+        if (el) el.textContent = likes.toLocaleString() + ' likes';
+        const cEl = document.getElementById('insta-comments');
+        if (cEl) cEl.textContent = `View all ${Math.floor(likes / 15)} comments`;
+        if (likes >= 2340) clearInterval(likeTimer);
+      }, 60);
+    }
+
+    await delay(300);
+    if (runAnimations('SMS')) {
+      const sm = SIM_METRICS.SMS;
+      animateCount('sms-sent', sm.sent);
+      animateCount('sms-delivered', sm.delivered, '%', 1800, true);
+      animateCount('sms-clicks', sm.clicks);
+      animateCount('sms-optout', sm.optout);
+    }
+
+    await delay(200);
+    if (runAnimations('LinkedIn')) {
+      const li = SIM_METRICS.LinkedIn;
+      animateCount('li-impressions', li.impressions);
+      animateCount('li-reach', li.reach);
+      animateCount('li-engage', li.engage, '%', 1800, true);
+      animateCount('li-clicks', li.clicks);
+      let reactions = 0;
+      const liReact = setInterval(() => {
+        reactions += Math.floor(Math.random() * 5 + 1);
+        const rEl = document.getElementById('li-reactions');
+        if (rEl) rEl.textContent = reactions.toLocaleString();
+        const cEl = document.getElementById('li-comments');
+        if (cEl) cEl.textContent = Math.floor(reactions / 8) + ' comments';
+        if (reactions >= 820) clearInterval(liReact);
+      }, 50);
+    }
+
+    await delay(200);
+    if (runAnimations('Email')) {
+      const em = SIM_METRICS.Email;
+      animateCount('email-sent', em.sent);
+      animateCount('email-open', em.open, '%', 1800, true);
+      animateCount('email-click', em.click, '%', 1800, true);
+      animateCount('email-unsub', em.unsub);
+    }
+
+    await delay(300);
+    if (runAnimations('Push Notification')) {
+      const p = SIM_METRICS['Push Notification'];
+      animateCount('push-sent', p.sent);
+      animateCount('push-open', p.open, '%', 1800, true);
+      animateCount('push-tap', p.tap, '%', 1800, true);
+      animateCount('push-dismiss', p.dismiss);
+    }
+
+    await delay(200);
+    if (runAnimations('WhatsApp')) {
+      const w = SIM_METRICS.WhatsApp;
+      animateCount('wa-sent', w.sent);
+      animateCount('wa-read', w.read, '%', 1800, true);
+      animateCount('wa-reply', w.reply);
+      animateCount('wa-conv', w.conv, '%', 1800, true);
+    }
+
+    const { series, totalReach } = buildAgent9Analytics(handoff, keys);
+    await delay(400);
+    animateCount('total-reach', totalReach || 284750);
+
+    analyticsStore = series.map(s => ({ ...s, content_sample: (handoff?.formatted_packages?.[s.channel]?.formatted || '').slice(0, 200) }));
+
+    await delay(2000);
+    if (handoff) persistAnalyticsForAgent9(handoff, series);
+    if (handoff) persistPublisherSimComplete(handoff, keys);
+
+    if (statusTextEl) {
+      statusTextEl.textContent = `✓ ${keys.length} channel(s) simulated. Analytics saved for Agent 9 (localStorage).`;
+    }
+    bar.querySelector('.status-dot').style.background = '#2ecc71';
+    bar.querySelector('.status-dot').style.boxShadow = '0 0 12px #2ecc71';
+
+    const sumEl = document.getElementById('summary-dispatched');
+    if (sumEl) sumEl.textContent = `${keys.length}/${keys.length}`;
+  };
+
+  window.reject = function reject() {
+    document.getElementById('rejectOverlay').classList.add('visible');
+  };
+
+  function delay(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  window.getAnalyticsData = () => analyticsStore;
+
+  function tryLoadHandoffFromStorage() {
+    try {
+      const raw = localStorage.getItem('gcn_publisher_handoff');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.formatted_packages) window.renderPublisherUI(data);
+    } catch (e) {
+      console.warn('[Publisher UI] Could not load handoff', e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryLoadHandoffFromStorage);
+  } else {
+    tryLoadHandoffFromStorage();
+  }
+  window.addEventListener('storage', ev => {
+    if (ev.key === 'gcn_publisher_handoff' && ev.newValue) {
+      try {
+        window.renderPublisherUI(JSON.parse(ev.newValue));
+      } catch (_) {}
+    }
+  });
+  window.addEventListener('gcn-publisher-handoff', ev => {
+    if (ev.detail?.formatted_packages) window.renderPublisherUI(ev.detail);
+  });
+})();
+</script>
+</body>
+</html>
