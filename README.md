@@ -1,7 +1,7 @@
 # GCN D2C Fintech Edition
 
 ## Autonomous Content Generation System for Consumer Fintech
-
+live demo link: https://drive.google.com/file/d/1oJI1SXL5Q4H-LopcFzwU0vWJLrdLBA-F/view?usp=sharing
 ---
 
 ## Overview
