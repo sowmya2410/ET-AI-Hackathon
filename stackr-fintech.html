@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Stackr Financial — India's Consumer-First Financial Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cream:   #f7f4ef;
+  --paper:   #faf8f4;
+  --ink:     #111110;
+  --ink2:    #2c2c2a;
+  --muted:   #8a8880;
+  --border:  #e0dbd2;
+  --gold:    #c8922a;
+  --gold2:   #e8b048;
+  --red:     #c0392b;
+  --green:   #1a6b3c;
+  --blue:    #1a3a6b;
+  --display: 'Fraunces', serif;
+  --sans:    'Instrument Sans', sans-serif;
+  --mono:    'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.4;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 60px;
+  background: rgba(247,244,239,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-logo {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo svg { width: 16px; height: 16px; }
+.nav-wordmark { font-family: var(--display); font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.nav-tagline { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.15s; letter-spacing: 0.01em; }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  background: var(--ink); color: var(--cream);
+  border: none; border-radius: 6px; padding: 8px 18px;
+  cursor: pointer; transition: background 0.15s; text-transform: uppercase;
+}
+.nav-cta:hover { background: var(--ink2); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 100px 48px 60px;
+  position: relative; z-index: 1;
+  overflow: hidden;
+}
+.hero-kicker {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+  color: var(--gold); text-transform: uppercase; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-kicker::before { content: ''; display: block; width: 24px; height: 1px; background: var(--gold); }
+.hero-h1 {
+  font-family: var(--display); font-size: clamp(48px, 6vw, 88px);
+  font-weight: 900; line-height: 0.95; letter-spacing: -0.03em;
+  color: var(--ink); margin-bottom: 28px; max-width: 700px;
+}
+.hero-h1 em { font-style: italic; color: var(--gold); }
+.hero-sub {
+  font-size: 16px; color: var(--muted); max-width: 480px;
+  line-height: 1.7; margin-bottom: 40px;
+}
+.hero-actions { display: flex; gap: 12px; align-items: center; }
+.btn-primary {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--ink); color: var(--cream);
+  border: none; border-radius: 8px; padding: 14px 28px;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { background: var(--gold); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,146,42,0.25); }
+.btn-ghost {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 8px; padding: 14px 28px;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Hero stats */
+.hero-stats {
+  display: flex; gap: 0; margin-top: 80px;
+  border-top: 1px solid var(--border); padding-top: 32px;
+  max-width: 600px;
+}
+.hero-stat { flex: 1; padding-right: 32px; border-right: 1px solid var(--border); }
+.hero-stat:last-child { border-right: none; padding-right: 0; padding-left: 32px; }
+.hero-stat:first-child { padding-left: 0; }
+.hs-val { font-family: var(--display); font-size: 32px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em; }
+.hs-lbl { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+
+/* Hero BG decoration */
+.hero-deco {
+  position: absolute; right: -120px; top: 50%; transform: translateY(-50%);
+  width: 600px; height: 600px; border-radius: 50%;
+  border: 1px solid var(--border);
+  pointer-events: none;
+}
+.hero-deco::before {
+  content: ''; position: absolute; inset: 60px; border-radius: 50%;
+  border: 1px solid var(--border);
+}
+.hero-deco::after {
+  content: ''; position: absolute; inset: 140px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,146,42,0.06) 0%, transparent 70%);
+}
+
+/* ── MISSION STRIP ── */
+.mission-strip {
+  background: var(--ink); color: var(--cream);
+  padding: 60px 48px; position: relative; z-index: 1;
+  overflow: hidden;
+}
+.mission-strip::before {
+  content: '';
+  position: absolute; right: 0; top: 0; bottom: 0; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(200,146,42,0.06));
+}
+.mission-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.mission-left {}
+.mission-eyebrow { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+.mission-headline { font-family: var(--display); font-size: 36px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; font-style: italic; }
+.mission-right { display: flex; flex-direction: column; gap: 24px; }
+.mission-point { display: flex; gap: 16px; }
+.mp-num { font-family: var(--mono); font-size: 11px; color: var(--gold); padding-top: 2px; flex-shrink: 0; }
+.mp-text { font-size: 14px; color: rgba(250,248,244,0.7); line-height: 1.6; }
+.mp-text strong { color: var(--cream); }
+
+/* ── SECTION ── */
+.section { padding: 100px 48px; position: relative; z-index: 1; }
+.section-max { max-width: 1200px; margin: 0 auto; }
+.section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 56px; }
+.section-eyebrow { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+.section-h2 { font-family: var(--display); font-size: 42px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+.section-sub { font-size: 14px; color: var(--muted); max-width: 320px; text-align: right; line-height: 1.6; }
+
+/* ── PRODUCT CARDS ── */
+.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+.product-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex; flex-direction: column;
+  animation: fadeUp 0.6s ease both;
+}
+.product-card:nth-child(1) { animation-delay: 0s; }
+.product-card:nth-child(2) { animation-delay: 0.1s; }
+.product-card:nth-child(3) { animation-delay: 0.2s; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+.product-card:hover { box-shadow: 0 20px 60px rgba(17,17,16,0.1); transform: translateY(-4px); z-index: 2; }
+
+.pc-accent { height: 3px; width: 100%; }
+.product-card:nth-child(1) .pc-accent { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+.product-card:nth-child(2) .pc-accent { background: linear-gradient(90deg, #c8922a, #e8b048); }
+.product-card:nth-child(3) .pc-accent { background: linear-gradient(90deg, #1a3a6b, #2563eb); }
+
+.pc-body { padding: 32px; flex: 1; display: flex; flex-direction: column; }
+.pc-category {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.pc-cat-dot { width: 5px; height: 5px; border-radius: 50%; }
+.product-card:nth-child(1) .pc-cat-dot { background: var(--red); }
+.product-card:nth-child(2) .pc-cat-dot { background: var(--gold); }
+.product-card:nth-child(3) .pc-cat-dot { background: var(--blue); }
+.product-card:nth-child(1) .pc-category { color: var(--red); }
+.product-card:nth-child(2) .pc-category { color: var(--gold); }
+.product-card:nth-child(3) .pc-category { color: var(--blue); }
+
+.pc-name { font-family: var(--display); font-size: 30px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-bottom: 6px; }
+.pc-tagline { font-size: 13px; color: var(--muted); margin-bottom: 20px; font-style: italic; }
+.pc-desc { font-size: 14px; color: var(--ink2); line-height: 1.7; margin-bottom: 24px; }
+
+.pc-specs { border-top: 1px solid var(--border); padding-top: 20px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
+.pc-spec { display: flex; justify-content: space-between; align-items: baseline; }
+.pc-spec-k { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.pc-spec-v { font-family: var(--mono); font-size: 11px; color: var(--ink); font-weight: 500; }
+
+.pc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+.pc-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  border: 1px solid var(--border); border-radius: 3px;
+  padding: 3px 8px; color: var(--muted); text-transform: uppercase;
+}
+.product-card:nth-child(1) .pc-tag.highlight { border-color: #c0392b44; color: var(--red); background: #c0392b0a; }
+.product-card:nth-child(2) .pc-tag.highlight { border-color: #c8922a44; color: var(--gold); background: #c8922a0a; }
+.product-card:nth-child(3) .pc-tag.highlight { border-color: #1a3a6b44; color: var(--blue); background: #1a3a6b0a; }
+
+.pc-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+
+.btn-download {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid; border-radius: 6px; padding: 11px 16px;
+  cursor: pointer; transition: all 0.2s; font-weight: 500;
+}
+.product-card:nth-child(1) .btn-download { color: var(--red); border-color: #c0392b44; background: transparent; }
+.product-card:nth-child(1) .btn-download:hover { background: var(--red); color: white; border-color: var(--red); }
+.product-card:nth-child(2) .btn-download { color: var(--gold); border-color: #c8922a44; background: transparent; }
+.product-card:nth-child(2) .btn-download:hover { background: var(--gold); color: white; border-color: var(--gold); }
+.product-card:nth-child(3) .btn-download { color: var(--blue); border-color: #1a3a6b44; background: transparent; }
+.product-card:nth-child(3) .btn-download:hover { background: var(--blue); color: white; border-color: var(--blue); }
+
+.btn-view {
+  display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 6px;
+  border: 1px solid var(--border); background: transparent;
+  cursor: pointer; color: var(--muted); font-size: 16px;
+  transition: all 0.15s;
+}
+.btn-view:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── COMPLIANCE STRIP ── */
+.compliance-strip {
+  background: var(--paper); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 32px 48px; position: relative; z-index: 1;
+}
+.compliance-inner { max-width: 1200px; margin: 0 auto; }
+.compliance-label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+.compliance-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.c-pill {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 5px 14px; color: var(--ink2); background: var(--cream);
+  display: flex; align-items: center; gap: 6px;
+}
+.c-pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+/* ── PIPELINE SECTION ── */
+.pipeline-section {
+  background: var(--ink); padding: 100px 48px;
+  position: relative; z-index: 1; overflow: hidden;
+}
+.pipeline-section::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.pipeline-inner { max-width: 1200px; margin: 0 auto; }
+.pipeline-eyebrow { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+.pipeline-h2 { font-family: var(--display); font-size: 40px; font-weight: 700; color: var(--cream); letter-spacing: -0.03em; margin-bottom: 48px; }
+.pipeline-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+.pipeline-step {
+  padding: 24px; border-right: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+}
+.pipeline-step:last-child { border-right: none; }
+.ps-num { font-family: var(--mono); font-size: 9px; color: rgba(200,146,42,0.5); letter-spacing: 0.15em; margin-bottom: 12px; }
+.ps-name { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 6px; font-style: italic; }
+.ps-desc { font-size: 11px; color: rgba(250,248,244,0.4); line-height: 1.5; }
+.ps-model { font-family: var(--mono); font-size: 9px; color: var(--gold); margin-top: 10px; }
+.ps-arrow {
+  position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(200,146,42,0.4); font-size: 12px; z-index: 1;
+}
+.pipeline-step:last-child .ps-arrow { display: none; }
+
+/* ── HOW TO USE ── */
+.howto-section { padding: 80px 48px; position: relative; z-index: 1; background: var(--paper); }
+.howto-inner { max-width: 1200px; margin: 0 auto; }
+.howto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.howto-left {}
+.howto-eyebrow { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+.howto-h2 { font-family: var(--display); font-size: 36px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.1; }
+.howto-desc { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
+.howto-steps { display: flex; flex-direction: column; gap: 0; }
+.howto-step { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.howto-step:last-child { border-bottom: none; }
+.hs-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; color: var(--muted);
+}
+.hs-content {}
+.hs-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.hs-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+.howto-right {}
+.demo-box {
+  background: var(--ink); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(17,17,16,0.15);
+}
+.demo-titlebar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+.demo-body { padding: 24px; }
+.demo-label { font-family: var(--mono); font-size: 9px; color: rgba(200,146,42,0.7); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+.demo-line { font-family: var(--mono); font-size: 12px; color: rgba(250,248,244,0.5); line-height: 1.8; }
+.demo-line.highlight { color: var(--cream); }
+.demo-line.gold { color: var(--gold2); }
+.demo-line.green { color: #5eead4; }
+.demo-line.muted { color: rgba(250,248,244,0.25); }
+.demo-cursor { display: inline-block; width: 7px; height: 13px; background: var(--gold2); animation: blink 1.2s step-end infinite; vertical-align: middle; margin-left: 2px; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink); color: var(--cream);
+  padding: 60px 48px 40px; position: relative; z-index: 1;
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+.footer-brand { max-width: 300px; }
+.footer-brand-name { font-family: var(--display); font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.footer-brand-desc { font-size: 13px; color: rgba(250,248,244,0.4); line-height: 1.6; }
+.footer-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.footer-col-title { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 13px; color: rgba(250,248,244,0.5); margin-bottom: 10px; text-decoration: none; transition: color 0.15s; cursor: pointer; }
+.footer-col a:hover { color: var(--cream); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer-legal { font-family: var(--mono); font-size: 10px; color: rgba(250,248,244,0.25); }
+.footer-reg { font-family: var(--mono); font-size: 10px; color: rgba(200,146,42,0.5); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(17,17,16,0.75); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--paper); border: 1px solid var(--border);
+  border-radius: 12px; max-width: 640px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+  animation: modalIn 0.25s ease;
+}
+@keyframes modalIn { from { opacity:0; transform:scale(0.96) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.modal-header {
+  padding: 24px 28px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  position: sticky; top: 0; background: var(--paper); z-index: 1;
+}
+.modal-title-label { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px; }
+.modal-title { font-family: var(--display); font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+.modal-close { background: none; border: 1px solid var(--border); border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 16px; color: var(--muted); transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { border-color: var(--ink); color: var(--ink); }
+.modal-body { padding: 28px; }
+.modal-section { margin-bottom: 24px; }
+.modal-section-title { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.modal-row { display: flex; justify-content: space-between; padding: 6px 0; }
+.modal-row-k { font-size: 13px; color: var(--muted); }
+.modal-row-v { font-family: var(--mono); font-size: 12px; color: var(--ink); font-weight: 500; }
+.modal-compliance { display: flex; flex-wrap: wrap; gap: 6px; }
+.modal-comp-tag { font-family: var(--mono); font-size: 9px; border: 1px solid var(--border); border-radius: 3px; padding: 3px 8px; color: var(--muted); }
+.modal-prompt-box {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; font-family: var(--mono); font-size: 12px; color: var(--ink2);
+  line-height: 1.7; white-space: pre-wrap;
+}
+.modal-footer { padding: 20px 28px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.modal-btn-dl {
+  flex: 1; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--ink); color: var(--cream); border: none; border-radius: 8px;
+  padding: 12px 20px; cursor: pointer; transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.modal-btn-dl:hover { background: var(--gold); }
+.modal-btn-cancel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; cursor: pointer; transition: all 0.15s; }
+.modal-btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+
+/* toast */
+.toast {
+  position: fixed; bottom: 32px; right: 32px; z-index: 300;
+  background: var(--ink); color: var(--cream); border-left: 3px solid var(--gold);
+  border-radius: 8px; padding: 14px 20px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.05em;
+  display: flex; align-items: center; gap: 10px;
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  .section { padding: 60px 20px; }
+  .products-grid { grid-template-columns: 1fr; }
+  .pipeline-steps { grid-template-columns: 1fr; }
+  .howto-grid { grid-template-columns: 1fr; }
+  .mission-inner { grid-template-columns: 1fr; }
+  .footer-cols { grid-template-columns: 1fr; }
+  .hero-deco { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="5" height="5" rx="1" fill="#f7f4ef"/>
+        <rect x="9" y="2" width="5" height="5" rx="1" fill="#c8922a"/>
+        <rect x="2" y="9" width="5" height="5" rx="1" fill="#c8922a" opacity="0.5"/>
+        <rect x="9" y="9" width="5" height="5" rx="1" fill="#f7f4ef" opacity="0.7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="nav-wordmark">Stackr Financial</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#products">Products</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#compliance">Compliance</a>
+    <a href="#about">About</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+    View Products
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-deco"></div>
+  <div class="hero-kicker">ET AI Hackathon 2026 · Track 1: Enterprise Content Operations</div>
+  <h1 class="hero-h1">India's <em>Consumer-First</em> Financial Stack</h1>
+  <p class="hero-sub">Stackr Financial builds transparent, regulation-native D2C fintech products for India's next 200 million users — from urban millennials to Bharat's vernacular-first borrowers.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#products">
+      ↓ Explore Products
+    </a>
+    <a class="btn-ghost" href="#pipeline">How GCN Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hs-val">3</div>
+      <div class="hs-lbl">D2C Products</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-val">9+</div>
+      <div class="hs-lbl">AI Agents</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-val">&lt;2hr</div>
+      <div class="hs-lbl">Campaign Cycle</div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION STRIP -->
+<div class="mission-strip" id="about">
+  <div class="mission-inner">
+    <div class="mission-left">
+      <div class="mission-eyebrow">Our Mission</div>
+      <div class="mission-headline">"Financial access<br>should need no<br>translation."</div>
+    </div>
+    <div class="mission-right">
+      <div class="mission-point">
+        <div class="mp-num">01</div>
+        <div class="mp-text"><strong>Regulation-native by design.</strong> Every product is built with RBI Fair Practices, TRAI DLT, DPDPA 2023, and NPCI guidelines baked in — not bolted on.</div>
+      </div>
+      <div class="mission-point">
+        <div class="mp-num">02</div>
+        <div class="mp-text"><strong>Content that knows its audience.</strong> Gen Z gets FOMO hooks on Instagram. Bharat gets warm Hindi SMS. Millennials get APR tables on email. One pipeline, three truths.</div>
+      </div>
+      <div class="mission-point">
+        <div class="mp-num">03</div>
+        <div class="mp-text"><strong>Autonomous, auditable, accountable.</strong> Every published message carries an immutable audit trail — agent ID, compliance rule cited, human approver, output hash.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLIANCE STRIP -->
+<div class="compliance-strip" id="compliance">
+  <div class="compliance-inner">
+    <div class="compliance-label">Regulatory Coverage</div>
+    <div class="compliance-pills">
+      <div class="c-pill"><div class="c-pill-dot"></div> RBI Fair Practices Code</div>
+      <div class="c-pill"><div class="c-pill-dot"></div> TRAI DLT Registration</div>
+      <div class="c-pill"><div class="c-pill-dot"></div> DPDPA 2023</div>
+      <div class="c-pill"><div class="c-pill-dot"></div> SEBI Investment Norms</div>
+      <div class="c-pill"><div class="c-pill-dot"></div> NPCI UPI Guidelines</div>
+      <div class="c-pill"><div class="c-pill-dot"></div> RBI Grievance Redressal</div>
+      <div class="c-pill"><div class="c-pill-dot"></div> Digital Lending Guidelines 2022</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="section-max">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Product Suite</div>
+        <h2 class="section-h2">Three products.<br>One pipeline.</h2>
+      </div>
+      <div class="section-sub">Click any product card to preview a paste-ready product brief, or download the full ad-ready input to feed into the GCN Agent pipeline.</div>
+    </div>
+
+    <div class="products-grid">
+
+      <!-- PRODUCT 1: InstaCash -->
+      <div class="product-card">
+        <div class="pc-accent"></div>
+        <div class="pc-body">
+          <div class="pc-category"><div class="pc-cat-dot"></div> Personal Lending</div>
+          <div class="pc-name">InstaCash</div>
+          <div class="pc-tagline">Instant personal credit, approved in 90 seconds</div>
+          <div class="pc-desc">Instant personal loan product offering ₹10,000 to ₹5,00,000 with no collateral, flexible EMI repayment, same-day disbursement, and clear upfront pricing for urgent household, medical, travel, or education needs.</div>
+          <div class="pc-specs">
+            <div class="pc-spec"><span class="pc-spec-k">Loan Range</span><span class="pc-spec-v">₹10,000 – ₹5,00,000</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">APR</span><span class="pc-spec-v">18% – 36% p.a.</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Tenure</span><span class="pc-spec-v">6 – 24 months</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Processing Fee</span><span class="pc-spec-v">2% (no prepayment penalty)</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Best For</span><span class="pc-spec-v">Salary-backed short-term and medium-term credit needs</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Core Promise</span><span class="pc-spec-v">Clear pricing, quick eligibility check, fast bank transfer</span></div>
+          </div>
+          <div class="pc-tags">
+            <span class="pc-tag highlight">RBI Fair Practices</span>
+            <span class="pc-tag highlight">TRAI DLT</span>
+            <span class="pc-tag">HIGH Compliance</span>
+            <span class="pc-tag">Blog · SMS · Push · Email</span>
+          </div>
+          <div class="pc-footer">
+            <button class="btn-download" onclick="openModal('instacash')">
+              ↓ Download Product Spec
+            </button>
+            <button class="btn-view" onclick="openModal('instacash')" title="Preview spec">⊙</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT 2: PayFlow -->
+      <div class="product-card">
+        <div class="pc-accent"></div>
+        <div class="pc-body">
+          <div class="pc-category"><div class="pc-cat-dot"></div> UPI & Digital Payments</div>
+          <div class="pc-name">PayFlow</div>
+          <div class="pc-tagline">Smart UPI cashback that works while you sleep</div>
+          <div class="pc-desc">UPI cashback product that applies eligible offers automatically across supported payment modes, with no coupon hunting, no minimum spend barrier, and same-day wallet credit on qualifying transactions.</div>
+          <div class="pc-specs">
+            <div class="pc-spec"><span class="pc-spec-k">Cashback</span><span class="pc-spec-v">Up to ₹2,400 / month</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Platforms</span><span class="pc-spec-v">UPI, UPI Lite, NFC Tap</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Settlement</span><span class="pc-spec-v">T+0 wallet credit</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Sender ID</span><span class="pc-spec-v">GCNUPI (DLT Registered)</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Best For</span><span class="pc-spec-v">Frequent UPI users looking for simple cashback value</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Core Promise</span><span class="pc-spec-v">Eligible cashback without codes or manual tracking</span></div>
+          </div>
+          <div class="pc-tags">
+            <span class="pc-tag highlight">NPCI UPI Guidelines</span>
+            <span class="pc-tag highlight">TRAI DLT</span>
+            <span class="pc-tag">MEDIUM Compliance</span>
+            <span class="pc-tag">Instagram · WhatsApp · SMS · Push</span>
+          </div>
+          <div class="pc-footer">
+            <button class="btn-download" onclick="openModal('payflow')">
+              ↓ Download Product Spec
+            </button>
+            <button class="btn-view" onclick="openModal('payflow')" title="Preview spec">⊙</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT 3: VaultSave -->
+      <div class="product-card">
+        <div class="pc-accent"></div>
+        <div class="pc-body">
+          <div class="pc-category"><div class="pc-cat-dot"></div> Wallet & Micro-Savings</div>
+          <div class="pc-name">VaultSave</div>
+          <div class="pc-tagline">Bharat ka apna digital piggy bank</div>
+          <div class="pc-desc">Micro-savings wallet that rounds up everyday spends to the nearest ₹10, saves the difference automatically, and supports low-jargon onboarding with Hindi-first and multilingual assistance.</div>
+          <div class="pc-specs">
+            <div class="pc-spec"><span class="pc-spec-k">Round-up</span><span class="pc-spec-v">Nearest ₹10 auto-save</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Languages</span><span class="pc-spec-v">HI / TA / TE / BN / MR</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Min Balance</span><span class="pc-spec-v">₹0 (zero-friction)</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Sender ID</span><span class="pc-spec-v">GCNWAL (DLT Registered)</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Best For</span><span class="pc-spec-v">First-time savers and vernacular-first wallet users</span></div>
+            <div class="pc-spec"><span class="pc-spec-k">Core Promise</span><span class="pc-spec-v">Small automatic savings in plain, easy language</span></div>
+          </div>
+          <div class="pc-tags">
+            <span class="pc-tag highlight">DPDPA 2023</span>
+            <span class="pc-tag highlight">No Guaranteed Return</span>
+            <span class="pc-tag">HIGH Compliance</span>
+            <span class="pc-tag">SMS · WhatsApp · IVR · Blog</span>
+          </div>
+          <div class="pc-footer">
+            <button class="btn-download" onclick="openModal('vaultsave')">
+              ↓ Download Product Spec
+            </button>
+            <button class="btn-view" onclick="openModal('vaultsave')" title="Preview spec">⊙</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE SECTION -->
+<section class="pipeline-section" id="pipeline">
+  <div class="pipeline-inner">
+    <div class="pipeline-eyebrow">GCN Agent Pipeline</div>
+    <h2 class="pipeline-h2">From product spec to published content<br>in under 4 hours.</h2>
+    <div class="pipeline-steps">
+      <div class="pipeline-step">
+        <div class="ps-num">AGENT 1</div>
+        <div class="ps-name">Context Profiler</div>
+        <div class="ps-desc">Parses brief → segment, product, channel, compliance risk</div>
+        <div class="ps-model">claude-haiku</div>
+        <div class="ps-arrow">→</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-num">AGENT 2–3</div>
+        <div class="ps-name">Persona + Writer</div>
+        <div class="ps-desc">Selects persona via VectorDB · Generates persona-conditioned content</div>
+        <div class="ps-model">claude-sonnet</div>
+        <div class="ps-arrow">→</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-num">AGENT 4–5</div>
+        <div class="ps-name">Compliance + Disclosure</div>
+        <div class="ps-desc">RBI/TRAI/DPDPA audit · Injects statutory disclosures</div>
+        <div class="ps-model">rule-db + haiku</div>
+        <div class="ps-arrow">→</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-num">AGENT 6–7</div>
+        <div class="ps-name">Localise + Format</div>
+        <div class="ps-desc">EN→HI/TA/TE/BN/MR · Channel-specific formatting</div>
+        <div class="ps-model">claude-sonnet</div>
+        <div class="ps-arrow">→</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-num">AGENT 8–9</div>
+        <div class="ps-name">Publish + Engage</div>
+        <div class="ps-desc">TRAI DLT gate · Dispatch · Engagement intelligence loop</div>
+        <div class="ps-model">rule-based</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section class="howto-section">
+  <div class="howto-inner">
+    <div class="howto-grid">
+      <div class="howto-left">
+        <div class="howto-eyebrow">Demo Guide</div>
+        <h2 class="howto-h2">Using the product spec with GCN pipeline</h2>
+        <p class="howto-desc">Each downloaded spec contains a pre-written content brief prompt. Paste it directly into the GCN Orchestrator to trigger the full 9-agent agentic simulation.</p>
+        <div class="howto-steps">
+          <div class="howto-step">
+            <div class="hs-num">1</div>
+            <div class="hs-content">
+              <div class="hs-title">Download a product spec</div>
+              <div class="hs-body">Click "Download Product Spec" on any product card. Each spec contains product parameters, compliance context, and a ready-made content brief.</div>
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="hs-num">2</div>
+            <div class="hs-content">
+              <div class="hs-title">Copy the GCN Input Prompt</div>
+              <div class="hs-body">Open the downloaded .txt file and find the "GCN CONTENT BRIEF PROMPT" section. This is the structured input Agent 1 expects.</div>
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="hs-num">3</div>
+            <div class="hs-content">
+              <div class="hs-title">Paste into Orchestrator</div>
+              <div class="hs-body">Feed the prompt into the GCN pipeline text input. The Orchestrator will trigger Agent 1 through Agent 9, including the human approval gate.</div>
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="hs-num">4</div>
+            <div class="hs-content">
+              <div class="hs-title">Observe agentic simulation</div>
+              <div class="hs-body">Watch compliance auditing, persona selection, vernacular localisation, channel formatting, and the publisher dispatch — fully simulated end-to-end.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="howto-right">
+        <div class="demo-box">
+          <div class="demo-titlebar">
+            <div class="demo-dot" style="background:#ff5f57"></div>
+            <div class="demo-dot" style="background:#febc2e"></div>
+            <div class="demo-dot" style="background:#28c840"></div>
+            <div style="margin-left:8px;font-family:var(--mono);font-size:10px;color:rgba(250,248,244,0.25)">gcn-orchestrator.input</div>
+          </div>
+          <div class="demo-body">
+            <div class="demo-label">GCN Content Brief — PayFlow</div>
+            <div class="demo-line highlight">Product: PayFlow — UPI Smart Cashback</div>
+            <div class="demo-line">Company: Stackr Financial</div>
+            <div class="demo-line gold">Sender ID: GCNUPI (DLT Registered)</div>
+            <div class="demo-line highlight">Target: Millennial (26-38), urban India</div>
+            <div class="demo-line">Campaign intent: Acquisition</div>
+            <div class="demo-line gold">Channels: SMS, Instagram, WhatsApp, Push</div>
+            <div class="demo-line">Compliance: NPCI UPI, TRAI DLT, DPDPA</div>
+            <div class="demo-line green">Vernacular: Hindi optional</div>
+            <div class="demo-line muted">─────────────────────────────</div>
+            <div class="demo-line highlight">Generate a multi-channel campaign</div>
+            <div class="demo-line highlight">for PayFlow's Diwali acquisition</div>
+            <div class="demo-line highlight">sprint. Lead with cashback of up</div>
+            <div class="demo-line highlight">to ₹2,400/month. No guaranteed</div>
+            <div class="demo-line highlight">return language. APR N/A for UPI.</div>
+            <div class="demo-line highlight">Opt-out mandatory in SMS.</div>
+            <div style="margin-top:8px"><div class="demo-cursor"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-brand-name">Stackr Financial</div>
+        <div class="footer-brand-desc">India's consumer-first financial stack. Built for the ET AI Hackathon 2026, Track 1: Enterprise Content Operations. Knowledge Partner: Avataar.ai</div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <div class="footer-col-title">Products</div>
+          <a onclick="openModal('instacash')">InstaCash — Personal Loans</a>
+          <a onclick="openModal('payflow')">PayFlow — UPI Cashback</a>
+          <a onclick="openModal('vaultsave')">VaultSave — Micro Savings</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Pipeline</div>
+          <a>Agent 1: Context Profiler</a>
+          <a>Agent 4: Compliance Auditor</a>
+          <a>Agent 8: Publisher</a>
+          <a>Agent 9: Engagement Intel</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Compliance</div>
+          <a>RBI Fair Practices Code</a>
+          <a>TRAI DLT Framework</a>
+          <a>DPDPA 2023</a>
+          <a>NPCI UPI Guidelines</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">© 2026 Stackr Financial. Simulated product for hackathon demonstration. Not a real financial service.</div>
+      <div class="footer-reg">RBI · SEBI · TRAI · DPDPA · NPCI compliant pipeline</div>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title-label" id="modalLabel">Paste-Ready Product Brief</div>
+        <div class="modal-title" id="modalTitle">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="modal-btn-dl" id="modalDlBtn">↓ Download .txt Brief</button>
+      <button class="modal-btn-cancel" onclick="closeModalDirect()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Product brief downloaded successfully</div>
+
+<script>
+// ── PRODUCT DATA ─────────────────────────────────────────
+const PRODUCTS = {
+  instacash: {
+    label: 'Personal Lending · Stackr Financial',
+    title: 'InstaCash',
+    color: '#c0392b',
+    sections: [
+      {
+        title: 'Product Overview',
+        rows: [
+          ['Product Name', 'InstaCash — Instant Personal Credit'],
+          ['Company', 'Stackr Financial'],
+          ['Category', 'Personal Lending / Consumer Credit'],
+          ['Primary Goal', 'Drive applications for instant personal loans with transparent pricing'],
+          ['Primary Use Case', 'Medical, travel, bill, education, and urgent household needs'],
+          ['Tone Direction', 'Clear, confident, trustworthy, and action-oriented'],
+        ]
+      },
+      {
+        title: 'Financial Parameters',
+        rows: [
+          ['Loan Amount Range', '₹10,000 – ₹5,00,000'],
+          ['Annual Percentage Rate', '18% – 36% p.a. (stated upfront per RBI FPC)'],
+          ['Tenure', '6 – 24 months (flexible EMI)'],
+          ['Processing Fee', '2% of loan amount (no hidden charges)'],
+          ['Prepayment Penalty', 'NIL'],
+          ['Disbursement', 'Direct to registered bank account (T+0)'],
+          ['Credit Assessment', 'Bureau score + in-app transaction data (DPDPA consent required)'],
+        ]
+      },
+      {
+        title: 'Channel Mix & Compliance',
+        rows: [
+          ['Primary Channels', 'Blog, Email, LinkedIn, Push Notification'],
+          ['Secondary Channels', 'Instagram, SMS'],
+          ['DLT Sender ID', 'GCNFIN (Registered — templates: loan-acquisition, emi-reminder)'],
+          ['Compliance Risk Level', 'HIGH — RBI Fair Practices Code mandatory'],
+          ['Key Regulations', 'RBI Fair Practices Code, TRAI DLT, DPDPA 2023, Digital Lending Guidelines 2022'],
+          ['Prohibited Language', '"Guaranteed approval", "instant approval guaranteed", any coercive recovery language'],
+          ['Mandatory Disclosures', 'Full APR + fee schedule, RBI Banking Ombudsman contact, DPDPA consent clause'],
+        ]
+      },
+      {
+        title: 'Content Requirements',
+        rows: [
+          ['Primary Ad Copy', 'Short loan-acquisition copy with APR and fee clarity, strong CTA, no exaggerated claims'],
+          ['SMS (DLT)', '160 chars max, GCNFIN sender ID, opt-out STOP 1909, template: loan-acquisition'],
+          ['Push Notification', 'Title ≤50 chars, Body ≤100 chars, instant action nudge without guarantee language'],
+          ['Landing Page Copy', 'Feature explainer with APR, tenure, fee schedule, and repayment clarity'],
+          ['Vernacular', 'Hindi (HI) if Bharat segment flagged — statutory text locked'],
+        ]
+      },
+    ],
+    compliance: ['RBI Fair Practices Code', 'TRAI DLT Registration', 'DPDPA 2023', 'Digital Lending Guidelines 2022', 'RBI Grievance Redressal Circular'],
+    prompt: `Product: InstaCash — Instant Personal Credit by Stackr Financial
+Loan range: ₹10,000 – ₹5,00,000 | APR: 18–36% p.a. | Tenure: 6–24 months
+Processing fee: 2% | No prepayment penalty | Disbursement: direct bank account (T+0)
+Primary objective: Drive personal loan applications with transparent pricing and strong trust signals
+DLT Sender ID: GCNFIN | Template: loan-acquisition
+Compliance level: HIGH | Regulations: RBI Fair Practices Code, TRAI DLT, DPDPA 2023
+
+Generate paste-ready acquisition content for InstaCash including:
+1. Primary ad copy with a strong CTA and clear APR/fee mention
+2. SMS — 160 chars max, GCNFIN sender, opt-out STOP 1909, Hindi optional
+3. Push notification — Title ≤50 chars, Body ≤100 chars
+4. Landing page headline + short support copy
+All content must clear RBI Fair Practices Code. APR and processing fee must be
+stated upfront. No misleading quantification. Disclosure placeholders required.`
+  },
+
+  payflow: {
+    label: 'UPI & Digital Payments · Stackr Financial',
+    title: 'PayFlow',
+    color: '#c8922a',
+    sections: [
+      {
+        title: 'Product Overview',
+        rows: [
+          ['Product Name', 'PayFlow — Smart UPI Cashback Engine'],
+          ['Company', 'Stackr Financial'],
+          ['Category', 'UPI / Digital Payments'],
+          ['Primary Goal', 'Drive app installs and first eligible UPI transactions'],
+          ['Primary Use Case', 'Daily UPI payments with simplified cashback value'],
+          ['Tone Direction', 'Fast, benefit-led, upbeat, and easy to understand'],
+        ]
+      },
+      {
+        title: 'Product Parameters',
+        rows: [
+          ['Cashback Cap', 'Up to ₹2,400 per month (not guaranteed — subject to eligible transactions)'],
+          ['Cashback Mechanism', 'AI-powered tier matching per transaction — automatic, no codes'],
+          ['Platforms Supported', 'UPI, UPI Lite, NFC Tap-to-Pay, International Remittance'],
+          ['Settlement', 'T+0 wallet credit after each eligible transaction'],
+          ['Minimum Spend', 'None (zero friction onboarding)'],
+          ['DLT Sender ID', 'GCNUPI (Registered — templates: upi-cashback, upi-feature)'],
+        ]
+      },
+      {
+        title: 'Channel Mix & Compliance',
+        rows: [
+          ['Primary Channels', 'Instagram, WhatsApp, Push Notification, SMS'],
+          ['Secondary Channels', 'YouTube Shorts, In-app Banner'],
+          ['Compliance Risk Level', 'MEDIUM — NPCI UPI Guidelines + TRAI DLT'],
+          ['Key Regulations', 'NPCI UPI Guidelines, TRAI DLT, DPDPA 2023'],
+          ['Prohibited Language', '"Guaranteed cashback", "earn 100% back", any misleading quantified cashback claim'],
+          ['Mandatory Disclosures', 'TRAI opt-out (STOP 1909), cashback subject to eligible transactions disclaimer'],
+          ['Optimal Window', '8:00 AM – 10:00 AM IST (Millennial) | 7:00 PM – 9:00 PM IST (Gen Z)'],
+        ]
+      },
+      {
+        title: 'Content Requirements',
+        rows: [
+          ['Primary Ad Copy', 'Short cashback-led copy using only qualified "up to" claims and a clear app CTA'],
+          ['WhatsApp Business', 'Approved template format, opt-in verified before send, warm cashback nudge'],
+          ['SMS (DLT)', '160 chars, GCNUPI sender, template: upi-cashback, STOP 1909 opt-out'],
+          ['Push Notification', 'Title ≤50 chars, Body ≤100 chars, FCM + APNs dual platform'],
+          ['In-app Banner', 'One-line benefit statement with qualified cashback and no absolute promise'],
+        ]
+      },
+    ],
+    compliance: ['NPCI UPI Guidelines', 'TRAI DLT Registration', 'DPDPA 2023', 'No Misleading Cashback Claims'],
+    prompt: `Product: PayFlow — Smart UPI Cashback Engine by Stackr Financial
+Cashback: up to ₹2,400/month (not guaranteed — subject to eligible transactions)
+Platforms: UPI, UPI Lite, NFC Tap-to-Pay
+Settlement: T+0 wallet credit | DLT Sender ID: GCNUPI | Template: upi-cashback
+Primary objective: Drive app installs and qualified UPI cashback activation
+Compliance level: MEDIUM | Regulations: NPCI UPI Guidelines, TRAI DLT, DPDPA 2023
+PROHIBITED: "guaranteed cashback" or any absolute cashback claim
+
+Generate paste-ready acquisition content for PayFlow across:
+1. Primary ad copy using "up to ₹2,400" with a clear install CTA
+2. WhatsApp Business message with opt-in-safe cashback value and app link
+3. SMS — 160 chars, GCNUPI sender, STOP 1909, cashback teaser, Hindi optional
+4. Push notification — cashback hook ≤50 chars, action nudge ≤100 chars
+All content must comply with NPCI UPI guidelines. No misleading quantification.
+Cashback must be qualified as "up to" not absolute. TRAI opt-out mandatory in SMS.`
+  },
+
+  vaultsave: {
+    label: 'Wallet & Micro-Savings · Stackr Financial',
+    title: 'VaultSave',
+    color: '#1a3a6b',
+    sections: [
+      {
+        title: 'Product Overview',
+        rows: [
+          ['Product Name', 'VaultSave — Vernacular Micro-Savings Wallet'],
+          ['Company', 'Stackr Financial'],
+          ['Category', 'Wallet / Micro-Savings'],
+          ['Primary Goal', 'Drive wallet activation and explain round-up savings simply'],
+          ['Primary Use Case', 'Everyday savings through automatic round-up on daily spends'],
+          ['Tone Direction', 'Simple, reassuring, low-jargon, and trust-building'],
+        ]
+      },
+      {
+        title: 'Product Parameters',
+        rows: [
+          ['Round-up Logic', 'Auto-saves to nearest ₹10 after every UPI/card transaction'],
+          ['Minimum Balance', '₹0 — zero-friction, no minimum required'],
+          ['Languages', 'Hindi (primary), Tamil, Telugu, Bengali, Marathi'],
+          ['UX Mode', 'Voice-assisted onboarding, IVR support for feature phones'],
+          ['DLT Sender ID', 'GCNWAL (Registered — templates: wallet-savings, wallet-nudge)'],
+          ['Savings Display', '"Aapne aaj ₹12 bachaye" — plain vernacular confirmation'],
+        ]
+      },
+      {
+        title: 'Channel Mix & Compliance',
+        rows: [
+          ['Primary Channels', 'SMS (Hindi), WhatsApp, IVR Script'],
+          ['Secondary Channels', 'Blog (EN + HI), In-app notification'],
+          ['Compliance Risk Level', 'HIGH — No guaranteed return language (SEBI), plain language mandate (RBI)'],
+          ['Key Regulations', 'DPDPA 2023, SEBI (no guaranteed returns), RBI Plain Language Mandate, TRAI DLT'],
+          ['Prohibited Language', '"Guaranteed returns", "assured savings growth", "risk-free" in any context'],
+          ['Vernacular Rule', 'Statutory text locked — cannot be paraphrased or shortened in translation'],
+          ['Optimal Window', '6:00 PM – 8:00 PM IST (Bharat segment prime time)'],
+        ]
+      },
+      {
+        title: 'Content Requirements',
+        rows: [
+          ['Primary Ad Copy', 'Hindi-first savings copy in plain language with one simple example and activation CTA'],
+          ['WhatsApp Hindi', 'Plain language, savings nudge, simple example of round-up benefit'],
+          ['IVR Script', 'Voice-first, ≤45 seconds, simple Hindi, no financial jargon'],
+          ['Blog Hindi + EN', 'Low-jargon, short sentences, bullet points, H1 in Hindi, meta in EN'],
+          ['Translation Rule', 'EN → HI localization — "EMI" = "masik kist", "savings" = "bachat" — cultural adaptation required'],
+        ]
+      },
+    ],
+    compliance: ['DPDPA 2023', 'SEBI No Guaranteed Returns', 'RBI Plain Language Mandate', 'TRAI DLT Registration', 'Vernacular Statutory Lock'],
+    prompt: `Product: VaultSave — Vernacular Micro-Savings Wallet by Stackr Financial
+Round-up: auto-saves to nearest ₹10 per transaction | Min balance: ₹0
+Languages: Hindi (primary), Tamil, Telugu, Bengali, Marathi
+DLT Sender ID: GCNWAL | Templates: wallet-savings, wallet-nudge
+Primary objective: Drive wallet activation and explain automatic round-up savings in plain Hindi
+Compliance level: HIGH | Regulations: DPDPA 2023, SEBI, RBI Plain Language, TRAI DLT
+PROHIBITED: "guaranteed returns", "assured savings", "risk-free"
+VERNACULAR RULE: statutory text locked — cannot be paraphrased in translation
+
+Generate paste-ready Hindi-first acquisition content for VaultSave including:
+1. Primary ad copy in Hindi explaining round-up savings in simple language
+2. WhatsApp message in Hindi with a simple savings example and activation CTA
+3. SMS in Hindi — 160 chars max, GCNWAL sender, STOP 1909
+4. IVR script — ≤45 seconds, voice-friendly Hindi, simple explanation of how to activate
+Vernacular adaptation: EMI → masik kist | savings → bachat | wallet → digital gullak
+All statutory disclosures must be injected as locked blocks — no paraphrase allowed.`
+  }
+};
+
+// ── MODAL LOGIC ─────────────────────────────────────────
+let currentProduct = null;
+
+function openModal(key) {
+  currentProduct = key;
+  const p = PRODUCTS[key];
+  document.getElementById('modalLabel').textContent = p.label;
+  document.getElementById('modalTitle').textContent = p.title;
+  document.getElementById('modalTitle').style.color = p.color;
+
+  let html = '';
+  p.sections.forEach(sec => {
+    html += `<div class="modal-section">
+      <div class="modal-section-title">${sec.title}</div>
+      ${sec.rows.map(([k,v]) => `
+        <div class="modal-row">
+          <div class="modal-row-k">${k}</div>
+          <div class="modal-row-v">${v}</div>
+        </div>`).join('')}
+    </div>`;
+  });
+
+  html += `<div class="modal-section">
+    <div class="modal-section-title">Regulatory Coverage</div>
+    <div class="modal-compliance">${p.compliance.map(c => `<span class="modal-comp-tag">${c}</span>`).join('')}</div>
+  </div>`;
+
+  html += `<div class="modal-section">
+    <div class="modal-section-title">GCN Content Brief Prompt (paste into orchestrator)</div>
+    <div class="modal-prompt-box">${p.prompt}</div>
+  </div>`;
+
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalDlBtn').onclick = () => downloadSpec(key);
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── DOWNLOAD ─────────────────────────────────────────────
+function downloadSpec(key) {
+  const p = PRODUCTS[key];
+  let txt = '';
+
+  txt += `================================================================\n`;
+  txt += `STACKR FINANCIAL — PRODUCT SPECIFICATION\n`;
+  txt += `${p.title} · ${p.label}\n`;
+  txt += `Generated: ${new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'})} IST\n`;
+  txt += `For use with: GCN D2C Fintech Pipeline — ET AI Hackathon 2026\n`;
+  txt += `================================================================\n\n`;
+
+  p.sections.forEach(sec => {
+    txt += `── ${sec.title.toUpperCase()} ──\n`;
+    sec.rows.forEach(([k,v]) => {
+      txt += `  ${k.padEnd(28)} ${v}\n`;
+    });
+    txt += `\n`;
+  });
+
+  txt += `── REGULATORY COVERAGE ──\n`;
+  p.compliance.forEach(c => { txt += `  • ${c}\n`; });
+  txt += `\n`;
+
+  txt += `================================================================\n`;
+  txt += `GCN CONTENT BRIEF PROMPT\n`;
+  txt += `(Paste this into the GCN Orchestrator input to trigger simulation)\n`;
+  txt += `================================================================\n\n`;
+  txt += p.prompt;
+  txt += `\n\n================================================================\n`;
+  txt += `HOW TO USE THIS SPEC\n`;
+  txt += `================================================================\n`;
+  txt += `1. Open the GCN D2C Fintech pipeline (index.html or hosted demo)\n`;
+  txt += `2. Find the content brief input field in the Orchestrator panel\n`;
+  txt += `3. Copy the "GCN CONTENT BRIEF PROMPT" section above\n`;
+  txt += `4. Paste it into the brief input and click "Run Pipeline"\n`;
+  txt += `5. Watch Agent 1 → Agent 9 execute the full simulation\n`;
+  txt += `6. The Human Approval Gate will pause — click Approve to continue\n`;
+  txt += `7. Agent 8 will validate TRAI DLT before dispatch\n`;
+  txt += `8. Agent 9 generates engagement signals + content calendar\n`;
+  txt += `\nNote: This is a simulated product spec for hackathon demonstration.\n`;
+  txt += `Stackr Financial is not a real financial entity.\n`;
+  txt += `================================================================\n`;
+
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `stackr-${key}-product-spec.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  showToast(`✓ ${p.title} spec downloaded`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// clock
+setInterval(() => {
+  const now = new Date();
+  const timeEl = document.querySelector('.tb-clock');
+  if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-IN', {hour12:false, timeZone:'Asia/Kolkata'}) + ' IST';
+}, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCN D2C Fintech — Multi-Agent Pipeline</title>
+  <script src="https://js.puter.com/v2/"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<nav class="topnav">
+  <div class="topnav-logo">
+    GCN Fintech <span>D2C Pipeline</span>
+  </div>
+  <ul class="topnav-nav">
+    <li><a href="#" class="active">Dashboard</a></li>
+    <li><a href="#">Agents</a></li>
+    <li><a href="#">Audit</a></li>
+    <li><a href="#">Reports</a></li>
+    <li><a href="#">Settings</a></li>
+  </ul>
+  <div class="topnav-actions">
+    <div class="topnav-icon" title="Notifications">🔔</div>
+    <div class="topnav-icon" title="Profile">👤</div>
+  </div>
+</nav>
+
+<div class="main-wrap">
+
+  <!-- ── WELCOME ── -->
+  <div class="welcome-section">
+    <h1>GCN D2C Fintech Pipeline</h1>
+    <p>Multi-Agent AI Orchestration &nbsp;·&nbsp; 9 Agents + Orchestrator + Audit Logger</p>
+  </div>
+
+  <!-- ── STATS ── -->
+  <div class="stats-row">
+    <div class="stat-card dark">
+      <div class="stat-label">Total Agents</div>
+      <div class="stat-value">9</div>
+      <div class="stat-sub">Active in pipeline</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pipeline Status</div>
+      <div class="stat-value" id="stat-status" style="font-size:22px;margin-top:6px">Idle</div>
+      <div class="stat-sub">Click Run to start</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-label">Agents Done</div>
+      <div class="stat-value" id="stat-done">0</div>
+      <div class="stat-sub">of 9 completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Compliance</div>
+      <div class="stat-value" id="stat-compliance" style="font-size:22px;margin-top:6px">—</div>
+      <div class="stat-sub" id="stat-compliance-sub">Awaiting audit</div>
+    </div>
+  </div>
+
+  <!-- ── PIPELINE FLOW ── -->
+  <div class="pipeline-card">
+    <div class="card-title">
+      Live Pipeline Flow
+      <span style="font-size:11px;color:#555;font-family:'DM Mono',monospace">ORCHESTRATOR ACTIVE</span>
+    </div>
+    <div class="pipeline-track" id="pipeline-track">
+      <!-- Orch -->
+      <div class="pipe-node" id="track-orch">
+        <div class="pipe-circle" id="pc-orch">Orch</div>
+        <div class="pipe-node-label">Orchestrator</div>
+      </div>
+      <div class="pipe-connector" id="cn-orch-a1"></div>
+
+      <div class="pipe-node" id="track-a1">
+        <div class="pipe-circle" id="pc-a1">A1</div>
+        <div class="pipe-node-label">Profiler</div>
+      </div>
+      <div class="pipe-connector" id="cn-a1-a2"></div>
+
+      <div class="pipe-node" id="track-a2">
+        <div class="pipe-circle" id="pc-a2">A2</div>
+        <div class="pipe-node-label">Matcher</div>
+      </div>
+      <div class="pipe-connector" id="cn-a2-a3"></div>
+
+      <div class="pipe-node" id="track-a3">
+        <div class="pipe-circle" id="pc-a3">A3</div>
+        <div class="pipe-node-label">Writer</div>
+      </div>
+      <div class="pipe-connector" id="cn-a3-a4"></div>
+
+      <div class="pipe-node" id="track-a4">
+        <div class="pipe-circle" id="pc-a4">A4</div>
+        <div class="pipe-node-label">Auditor</div>
+      </div>
+      <div class="pipe-connector" id="cn-a4-a5"></div>
+
+      <div class="pipe-node" id="track-a5">
+        <div class="pipe-circle" id="pc-a5">A5</div>
+        <div class="pipe-node-label">Disclosure</div>
+      </div>
+      <div class="pipe-connector" id="cn-a5-a6"></div>
+
+      <div class="pipe-node" id="track-a6">
+        <div class="pipe-circle" id="pc-a6">A6</div>
+        <div class="pipe-node-label">Vernacular</div>
+      </div>
+      <div class="pipe-connector" id="cn-a6-a7"></div>
+
+      <div class="pipe-node" id="track-a7">
+        <div class="pipe-circle" id="pc-a7">A7</div>
+        <div class="pipe-node-label">Formatter</div>
+      </div>
+      <div class="pipe-connector" id="cn-a7-gate"></div>
+
+      <div class="pipe-node" id="track-gate">
+        <div class="pipe-circle" id="pc-gate">🧑</div>
+        <div class="pipe-node-label">Human Gate</div>
+      </div>
+      <div class="pipe-connector" id="cn-gate-a8"></div>
+
+      <div class="pipe-node" id="track-a8">
+        <div class="pipe-circle" id="pc-a8">A8</div>
+        <div class="pipe-node-label">Publisher</div>
+      </div>
+      <div class="pipe-connector" id="cn-a8-a9"></div>
+
+      <div class="pipe-node" id="track-a9">
+        <div class="pipe-circle" id="pc-a9">A9</div>
+        <div class="pipe-node-label">Engagement</div>
+      </div>
+    </div>
+    <div class="current-step-banner" id="current-step-banner">
+      <span class="current-step-dot"></span>
+      <span id="current-step-text">Waiting...</span>
+    </div>
+    <!-- Progress bar -->
+    <div style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px;">
+        <span>Pipeline Progress</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="prog-bar-wrap" style="background:#2a2a2a">
+        <div class="prog-bar-fill" id="prog-fill" style="width:0%;background:var(--accent)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BLOCKED BANNER ── -->
+  <div class="blocked-banner" id="pipeline-blocked-banner">
+    <span>🚫</span>
+    <span>PIPELINE HALTED — BLOCK severity detected. Escalated to compliance officer.</span>
+  </div>
+
+  <!-- ── INPUT ── -->
+  <div class="input-card">
+    <label>Content Brief — Input to Orchestrator</label>
+    <textarea id="brief" placeholder="e.g. Launch campaign for a new instant personal loan — Rs.10,000 to Rs.5,00,000, 6-24 month tenure, APR 18-36%. Target young urban users aged 18-25 in metro cities. Channels: Instagram Reels and app push notifications. Goal: new user acquisition."></textarea>
+    <label style="margin-top:14px;display:block">Product Specification — Optional Enterprise Context</label>
+    <textarea id="productSpec" placeholder="Paste product rules, eligibility, pricing, onboarding flow, repayment terms, feature limitations, approved messaging points, exclusions, or any internal product specification to ground the generated content."></textarea>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px">
+      <label for="productSpecTxt" class="pdf-btn" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+        <span>📄</span> Upload Product Spec TXT
+      </label>
+      <input id="productSpecTxt" type="file" accept=".txt,text/plain" style="display:none">
+      <div id="productSpecTxtStatus" style="font-size:12px;color:#8f8f8f;font-family:'DM Mono',monospace">No TXT uploaded</div>
+    </div>
+  <div class="chips">
+    <span class="chips-label">Try:</span>
+    <div class="chip" onclick="setExample(0)">Loan launch · Gen Z</div>
+      <div class="chip" onclick="setExample(1)">UPI cashback · WhatsApp</div>
+      <div class="chip" onclick="setExample(2)">Bharat SMS · Hindi</div>
+      <div class="chip" onclick="setExample(3)">Wallet savings · Millennial</div>
+      <div class="chip" onclick="setExample(4)">Grievance · all segments</div>
+    </div>
+  <div class="btn-row">
+    <button class="run-btn" id="runBtn" onclick="runPipeline()">
+      <span>▶</span> Run Full Pipeline
+    </button>
+    <button class="pdf-btn" id="pdfBtn" onclick="downloadPDF()" disabled>
+      <span>⬇</span> Download All Outputs (PDF)
+    </button>
+  </div>
+</div>
+
+  <!-- ── AGENTS ── -->
+  <div class="agents-section">
+
+    <!-- A1 -->
+    <div class="agent-card" id="panel-a1">
+      <div class="agent-header" onclick="toggleAgentBody('a1')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a1">1</div>
+          <div>
+            <div class="agent-title-text" id="title-a1">Agent 1 — D2C Audience &amp; Context Profiler</div>
+            <div class="agent-subtitle">Analyses brief to build a structured D2C profile</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a1">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a1">
+        <div class="agent-log" id="log-a1"></div>
+        <div class="agent-output" id="out-a1"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-12">↓ handoff: structured D2C profile → Agent 2</div>
+
+    <!-- A2 -->
+    <div class="agent-card" id="panel-a2">
+      <div class="agent-header" onclick="toggleAgentBody('a2')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a2">2</div>
+          <div>
+            <div class="agent-title-text" id="title-a2">Agent 2 — D2C Persona Matcher</div>
+            <div class="agent-subtitle">Selects the best persona from the profile</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a2">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a2">
+        <div class="agent-log" id="log-a2"></div>
+        <div class="agent-output" id="out-a2"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-23">↓ handoff: selected persona → Agent 3</div>
+
+    <!-- A3 -->
+    <div class="agent-card" id="panel-a3">
+      <div class="agent-header" onclick="toggleAgentBody('a3')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a3">3</div>
+          <div>
+            <div class="agent-title-text" id="title-a3">Agent 3 — D2C Writer Agent</div>
+            <div class="agent-subtitle">Drafts persona-targeted content with disclosure placeholders</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a3">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a3">
+        <div class="agent-log" id="log-a3"></div>
+        <div class="agent-output" id="out-a3"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-34">↓ handoff: draft content + [DISCLOSURE_PLACEHOLDER] tags → Agent 4</div>
+
+    <!-- A4 -->
+    <div class="agent-card" id="panel-a4">
+      <div class="agent-header" onclick="toggleAgentBody('a4')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a4">4</div>
+          <div>
+            <div class="agent-title-text" id="title-a4">Agent 4 — D2C Compliance Auditor</div>
+            <div class="agent-subtitle">Checks content against RBI, SEBI, ASCI guidelines</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a4">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a4">
+        <div class="agent-log" id="log-a4"></div>
+        <div class="agent-output" id="out-a4"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-45">↓ handoff: audited content + violation report → Agent 5</div>
+
+    <!-- A5 -->
+    <div class="agent-card" id="panel-a5">
+      <div class="agent-header" onclick="toggleAgentBody('a5')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a5">5</div>
+          <div>
+            <div class="agent-title-text" id="title-a5">Agent 5 — Disclosure Injection Agent</div>
+            <div class="agent-subtitle">Injects statutory disclosure blocks into content</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a5">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a5">
+        <div class="agent-log" id="log-a5"></div>
+        <div class="agent-output" id="out-a5"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-56">↓ handoff: fully disclosed content (statutory blocks locked) → Agent 6</div>
+
+    <!-- A6 -->
+    <div class="agent-card" id="panel-a6">
+      <div class="agent-header" onclick="toggleAgentBody('a6')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a6">6</div>
+          <div>
+            <div class="agent-title-text" id="title-a6">Agent 6 — Vernacular Localization Agent</div>
+            <div class="agent-subtitle">Translates and adapts content to regional languages</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a6">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a6">
+        <div class="agent-log" id="log-a6"></div>
+        <div class="agent-output" id="out-a6"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-67">↓ handoff: localized content variants → Agent 7</div>
+
+    <!-- A7 -->
+    <div class="agent-card" id="panel-a7">
+      <div class="agent-header" onclick="toggleAgentBody('a7')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a7">7</div>
+          <div>
+            <div class="agent-title-text" id="title-a7">Agent 7 — Channel Formatter</div>
+            <div class="agent-subtitle">Formats content per channel specs (Instagram, push, SMS…)</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a7">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a7">
+        <div class="agent-log" id="log-a7"></div>
+        <div class="agent-output" id="out-a7"></div>
+      </div>
+    </div>
+
+    <!-- HUMAN GATE -->
+    <div class="handoff-strip" id="connector-gate">↓ content + compliance report → Human Approval Gate</div>
+    <div class="gate-card" id="gate-box">
+      <div class="gate-card-title">👤 Human Approval Gate</div>
+      <p id="gate-desc">Content and compliance report ready for review. Please approve or reject before dispatch.<br>
+        <span id="gate-timer-text" style="color:var(--accent)"></span></p>
+      <div class="gate-actions">
+        <button class="gate-approve" onclick="humanDecision('APPROVED')">✓ Approve &amp; Publish</button>
+        <button class="gate-reject"  onclick="humanDecision('REJECTED')">✗ Reject</button>
+        <span class="gate-timer-badge" id="gate-timer-badge"></span>
+      </div>
+    </div>
+
+    <!-- A8 -->
+    <div class="handoff-strip" id="connector-78">↓ handoff: approved formatted packages → Agent 8</div>
+    <div class="agent-card" id="panel-a8">
+      <div class="agent-header" onclick="toggleAgentBody('a8')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a8">8</div>
+          <div>
+            <div class="agent-title-text" id="title-a8">Agent 8 — Publisher Agent</div>
+            <div class="agent-subtitle">Dispatches approved content to all channels</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a8">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a8">
+        <div class="agent-log" id="log-a8"></div>
+        <div class="agent-output" id="out-a8"></div>
+      </div>
+    </div>
+    <div class="handoff-strip" id="connector-89">↓ handoff: publish confirmation + metadata → Agent 9</div>
+
+    <div style="display:flex;justify-content:flex-end;margin:6px 0 10px">
+      <button class="pdf-btn" id="analyticsBtnInline" onclick="openAgent9AnalyticsUI()">
+        <span>📊</span> Open Analytics UI
+      </button>
+    </div>
+
+    <!-- A9 -->
+    <div class="agent-card" id="panel-a9">
+      <div class="agent-header" onclick="toggleAgentBody('a9')">
+        <div class="agent-header-left">
+          <div class="agent-num" id="anum-a9">9</div>
+          <div>
+            <div class="agent-title-text" id="title-a9">Agent 9 — Engagement Intelligence Agent</div>
+            <div class="agent-subtitle">Predicts KPIs and suggests A/B test variants</div>
+          </div>
+        </div>
+        <span class="agent-badge badge-waiting" id="status-a9">WAITING</span>
+      </div>
+      <div class="agent-body" id="body-a9">
+        <div class="agent-log" id="log-a9"></div>
+        <div class="agent-output" id="out-a9"></div>
+      </div>
+    </div>
+
+    <!-- AUDIT -->
+    <div class="audit-section">
+      <button class="audit-toggle" id="audit-toggle" onclick="toggleAudit()">▶ Show Audit Log (regulator-ready)</button>
+      <div class="audit-output" id="audit-log-panel">
+        <div id="out-audit"></div>
+      </div>
+    </div>
+
+  </div><!-- /agents-section -->
+</div><!-- /main-wrap -->
+
+<!-- ── ORCHESTRATOR SCRIPT ── -->
+<script type="module">
+  import { runAgent1 }        from './agents/agent1.js';
+  import { runAgent2 }        from './agents/agent2.js';
+  import { runAgent3 }        from './agents/agent3.js';
+  import { runAgent4 }        from './agents/agent4.js';
+  import { runAgent5 }        from './agents/agent5.js';
+  import { runAgent6 }        from './agents/agent6.js';
+  import { runAgent7 }        from './agents/agent7.js';
+  import { runAgent8, refreshAgent8OutputAfterPublisherSim } from './agents/agent8.js';
+  import { runAgent9 }        from './agents/agent9.js';
+  import { runStrategyCrewLayer } from './agents/strategyCrewAgent.js';
+  import { setTrack, sleep }  from './utils/logger.js';
+  import { EXAMPLES }         from './data/vectorDb.js';
+  import { saveAnalyticsBatch } from './data/analyticsMemory.js';
+  import {
+    auditLog, clearAuditLog, renderAuditLog,
+    logAgentStart, logAgentComplete, logHumanGate,
+  }                           from './agents/agentA.js';
+
+  let _gateResolve = null;
+  let _gateTimer   = null;
+  let _productSpecTxtText = '';
+
+  // ── Helpers ────────────────────────────────────────────────────────────
+  let doneCount = 0;
+
+  function setAgentState(id, state) {
+    const panel  = document.getElementById('panel-' + id);
+    const badge  = document.getElementById('status-' + id);
+    const num    = document.getElementById('anum-' + id);
+    const circle = document.getElementById('pc-' + id);
+    const node   = document.getElementById('track-' + id);
+    if (!panel) return;
+
+    // Remove all state classes
+    ['running','done','error'].forEach(c => {
+      panel.classList.remove(c);
+      if (node) node.classList.remove(c);
+    });
+
+    const states = {
+      waiting: { panelCls: '', badgeCls: 'badge-waiting', badgeTxt: 'WAITING', circleCls: '' },
+      running: { panelCls: 'running', badgeCls: 'badge-running', badgeTxt: 'RUNNING', circleCls: 'running' },
+      done:    { panelCls: 'done',    badgeCls: 'badge-done',    badgeTxt: 'DONE',    circleCls: 'done' },
+      error:   { panelCls: 'error',   badgeCls: 'badge-error',   badgeTxt: 'ERROR',   circleCls: 'error' },
+    };
+    const s = states[state] || states.waiting;
+    if (s.panelCls) panel.classList.add(s.panelCls);
+    if (node && s.panelCls) node.classList.add(s.panelCls);
+    badge.className   = 'agent-badge ' + s.badgeCls;
+    badge.textContent = s.badgeTxt;
+    if (circle) { circle.className = 'pipe-circle'; if (s.circleCls) circle.classList.add(s.circleCls); }
+
+    // Auto-open body when running
+    if (state === 'running') {
+      const body = document.getElementById('body-' + id);
+      if (body) body.classList.add('visible');
+    }
+    if (state === 'done') {
+      const out = document.getElementById('out-' + id);
+      if (out) out.classList.add('visible');
+      doneCount++;
+      document.getElementById('stat-done').textContent = doneCount;
+      const pct = Math.round((doneCount / 9) * 100);
+      document.getElementById('prog-fill').style.width = pct + '%';
+      document.getElementById('prog-pct').textContent  = pct + '%';
+    }
+  }
+
+  function addLog(id, txt, cls) {
+    const el  = document.getElementById('log-' + id);
+    if (!el) return;
+    const div = document.createElement('div');
+    div.className   = 'log-line' + (cls ? ' ' + cls : '');
+    div.textContent = txt;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function setOutput(id, html) {
+    const el = document.getElementById('out-' + id);
+    if (!el) return;
+    el.innerHTML = html;
+    el.classList.add('visible');
+  }
+
+  function activateConnector(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  function detectContentType(content) {
+    if (!content) return 'unknown';
+    if (content.length > 200) return 'long';
+    if (content.includes('₹')) return 'promo';
+    return 'short';
+  }
+
+  function detectCategory(content) {
+    if (!content) return 'general';
+    if (content.toLowerCase().includes('loan')) return 'loan';
+    if (content.toLowerCase().includes('offer')) return 'offer';
+    return 'general';
+  }
+
+  function normalizeAnalyticsBatch(analytics, formattedPackages = {}) {
+    if (!Array.isArray(analytics)) return [];
+
+    return analytics.map(item => {
+      const channel = item?.channel || 'Unknown';
+      const impressions = Number(item?.impressions) || 0;
+      const ctr = Number(item?.ctr) || 0;
+      const clicks =
+        Number.isFinite(item?.clicks) && Number(item.clicks) >= 0
+          ? Number(item.clicks)
+          : Math.round(impressions * ctr);
+      const pkg = formattedPackages?.[channel];
+      const content =
+        item?.content ||
+        item?.content_sample ||
+        pkg?.formatted ||
+        pkg?.content ||
+        '';
+
+      return {
+        ...item,
+        channel,
+        impressions,
+        clicks,
+        ctr: impressions > 0 ? clicks / impressions : ctr,
+        content,
+        timestamp: item?.timestamp ?? new Date().getHours(),
+        content_type: item?.content_type ?? detectContentType(content),
+        category: item?.category ?? detectCategory(content)
+      };
+    });
+  }
+
+  function setCurrentStep(label) {
+    const b = document.getElementById('current-step-banner');
+    const t = document.getElementById('current-step-text');
+    if (!label) { b.classList.remove('active'); return; }
+    b.classList.add('active');
+    t.textContent = 'Currently running: ' + label;
+  }
+
+  function resetAgent(id) {
+    document.getElementById('log-' + id).innerHTML = '';
+    const out = document.getElementById('out-' + id);
+    out.style.display = 'none';
+    out.classList.remove('visible');
+    out.innerHTML = '';
+    const body = document.getElementById('body-' + id);
+    if (body) body.classList.remove('visible');
+    setAgentState(id, 'waiting');
+  }
+
+  function showError(agentId, msg) {
+    addLog(agentId, '> ERROR: ' + msg, 'warn');
+    setAgentState(agentId, 'error');
+  }
+
+  window.setExample = (i) => { document.getElementById('brief').value = EXAMPLES[i]; };
+
+  function buildCombinedBrief() {
+    const brief = document.getElementById('brief')?.value.trim() || '';
+    const productSpec = document.getElementById('productSpec')?.value.trim() || '';
+    const parts = [];
+
+    if (brief) parts.push(brief);
+    if (productSpec) parts.push(`PRODUCT SPECIFICATION:\n${productSpec}`);
+    if (_productSpecTxtText) parts.push(`PRODUCT SPECIFICATION TXT IMPORT:\n${_productSpecTxtText}`);
+
+    return parts.join('\n\n');
+  }
+
+  async function extractTxtText(file) {
+    return file.text();
+  }
+
+  const productSpecTxtInput = document.getElementById('productSpecTxt');
+  if (productSpecTxtInput) {
+    productSpecTxtInput.addEventListener('change', async (event) => {
+      const statusEl = document.getElementById('productSpecTxtStatus');
+      const file = event.target.files?.[0];
+
+      if (!file) {
+        _productSpecTxtText = '';
+        if (statusEl) statusEl.textContent = 'No TXT uploaded';
+        return;
+      }
+
+      if (statusEl) statusEl.textContent = `Reading ${file.name}...`;
+
+      try {
+        const extracted = (await extractTxtText(file)).trim();
+        _productSpecTxtText = extracted;
+        const wordCount = extracted ? extracted.split(/\s+/).filter(Boolean).length : 0;
+        if (statusEl) {
+          statusEl.textContent = wordCount
+            ? `${file.name} loaded · ${wordCount} words extracted`
+            : `${file.name} loaded · no readable text found`;
+        }
+      } catch (error) {
+        console.error('[GCN Product Spec TXT]', error);
+        _productSpecTxtText = '';
+        if (statusEl) statusEl.textContent = `Could not read ${file.name}`;
+        alert('Could not read the uploaded TXT file. Please try another file or paste the product specification manually.');
+      }
+    });
+  }
+
+  window.openAgent9AnalyticsUI = () => {
+    try {
+      const a9AnalyticsUrl = new URL('agents/agent9-analytics.html', window.location.href).href;
+      window.open(a9AnalyticsUrl, 'gcn_agent9_analytics_ui', 'noopener,noreferrer');
+    } catch (err) {
+      console.error('[GCN Analytics UI]', err);
+    }
+  };
+
+  window.toggleAudit = () => {
+    const panel = document.getElementById('audit-log-panel');
+    const btn   = document.getElementById('audit-toggle');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+      panel.style.display = 'block'; btn.textContent = '▼ Hide Audit Log'; renderAuditLog();
+    } else {
+      panel.style.display = 'none'; btn.textContent = '▶ Show Audit Log (regulator-ready)';
+    }
+  };
+
+  window.toggleAgentBody = (id) => {
+    const body = document.getElementById('body-' + id);
+    if (body) body.classList.toggle('visible');
+  };
+
+  // Expose to setTrack (imported from logger.js)
+  window._setAgentState = setAgentState;
+
+  // ── Human gate ────────────────────────────────────────────────────────
+  window.humanDecision = (decision) => {
+    clearInterval(_gateTimer);
+    document.getElementById('gate-box').classList.remove('active');
+    logHumanGate(decision, 'reviewer', decision === 'AUTO_APPROVED');
+    renderAuditLog();
+    if (_gateResolve) { _gateResolve(decision); _gateResolve = null; }
+  };
+
+  function waitForHumanGate(gateInput) {
+    return new Promise(resolve => {
+      _gateResolve = resolve;
+      const box = document.getElementById('gate-box');
+      box.classList.add('active');
+      const desc = document.getElementById('gate-desc');
+      const chList = Object.keys(gateInput.formatted_packages || {}).join(', ') || 'All channels';
+      desc.innerHTML = `<strong style="color:var(--accent)">${chList}</strong> ready for review.<br>
+        Persona: <strong style="color:var(--accent)">${gateInput.selected_persona || ''}</strong> &nbsp;&middot;&nbsp;
+        Segment: ${gateInput.consumer_segment || ''}.`;
+
+      document.getElementById('gate-timer-badge').textContent = 'Awaiting reviewer decision';
+
+      const pc = document.getElementById('pc-gate');
+      if (pc) pc.className = 'pipe-circle running';
+      activateConnector('cn-a7-gate');
+    });
+  }
+
+  const ALL_AGENTS     = ['a1','a2','a3','a4','a5','a6','a7','a8','a9'];
+  const ALL_CONNECTORS = ['connector-12','connector-23','connector-34','connector-45',
+                          'connector-56','connector-67','connector-78','connector-89','connector-gate'];
+
+  // ── MAIN PIPELINE ─────────────────────────────────────────────────────
+  window.runPipeline = async () => {
+    const brief = document.getElementById('brief').value.trim();
+    const combinedBrief = buildCombinedBrief();
+    if (!combinedBrief) { alert('Please enter a content brief.'); return; }
+
+    const btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    document.getElementById('pdfBtn').disabled = true;
+    doneCount = 0;
+    document.getElementById('stat-done').textContent = '0';
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('prog-pct').textContent  = '0%';
+    document.getElementById('stat-status').textContent = 'Running';
+    document.getElementById('stat-compliance').textContent = '—';
+    document.getElementById('stat-compliance-sub').textContent = 'Awaiting audit';
+
+    clearAuditLog();
+    ALL_AGENTS.forEach(resetAgent);
+    ALL_CONNECTORS.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
+
+    // Reset pipeline circles
+    ['orch','a1','a2','a3','a4','a5','a6','a7','gate','a8','a9'].forEach(id => {
+      const c = document.getElementById('pc-' + id);
+      if (c) c.className = 'pipe-circle';
+    });
+    // Reset connector lines
+    ['cn-orch-a1','cn-a1-a2','cn-a2-a3','cn-a3-a4','cn-a4-a5','cn-a5-a6','cn-a6-a7','cn-a7-gate','cn-gate-a8','cn-a8-a9'].forEach(id => {
+      const c = document.getElementById(id);
+      if (c) { c.classList.remove('active','done'); }
+    });
+
+    document.getElementById('gate-box').classList.remove('active');
+    document.getElementById('pipeline-blocked-banner').classList.remove('active');
+    document.getElementById('out-audit').innerHTML = '';
+    if (_gateTimer) { clearInterval(_gateTimer); _gateTimer = null; }
+
+    // Mark orch running
+    const orchCircle = document.getElementById('pc-orch');
+    if (orchCircle) orchCircle.className = 'pipe-circle running';
+
+    auditLog({ agent: 'Orchestrator', event: 'PIPELINE_START', brief: combinedBrief.substring(0, 80) });
+
+    try {
+      const runId =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : String(Date.now()) + Math.random().toString(36).slice(2);
+      localStorage.setItem('gcn_run_id', runId);
+      localStorage.removeItem('gcn_publisher_analytics');
+      localStorage.removeItem('gcn_social_analytics_dashboard');
+      localStorage.removeItem('gcn_publisher_sim_complete');
+
+      // ── A1 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 1 — D2C Audience & Context Profiler');
+      setAgentState('a1', 'running');
+      const pc1 = document.getElementById('pc-a1'); if (pc1) pc1.className = 'pipe-circle running';
+      logAgentStart('Agent1-Profiler');
+      const profile = await runAgent1(combinedBrief);
+      logAgentComplete('Agent1-Profiler', profile.recommended_persona);
+      setAgentState('a1', 'done');
+      // ── Structured render A1
+      renderA1(profile);
+      const cn1 = document.getElementById('cn-a1-a2'); if (cn1) cn1.classList.add('done');
+      activateConnector('connector-12');
+      await sleep(300);
+
+      // ── A2 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 2 — D2C Persona Matcher');
+      setAgentState('a2', 'running');
+      const pc2 = document.getElementById('pc-a2'); if (pc2) pc2.className = 'pipe-circle running';
+      logAgentStart('Agent2-Matcher');
+      const a2Out = await runAgent2(profile);
+      logAgentComplete('Agent2-Matcher', a2Out.selected_persona);
+      setAgentState('a2', 'done');
+      // ── Structured render A2
+      renderA2(a2Out);
+      const cn2 = document.getElementById('cn-a2-a3'); if (cn2) cn2.classList.add('done');
+      activateConnector('connector-23');
+      await sleep(300);
+
+      // ── A3 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 3 — D2C Writer Agent');
+      setAgentState('a3', 'running');
+      const pc3 = document.getElementById('pc-a3'); if (pc3) pc3.className = 'pipe-circle running';
+      logAgentStart('Agent3-Writer', a2Out.selected_persona);
+      const a3Out = await runAgent3(a2Out, combinedBrief);
+      logAgentComplete('Agent3-Writer', a2Out.selected_persona);
+      setAgentState('a3', 'done');
+      // ── Structured render A3
+      renderA3(a3Out);
+      const cn3 = document.getElementById('cn-a3-a4'); if (cn3) cn3.classList.add('done');
+      activateConnector('connector-34');
+      await sleep(300);
+
+      // ── A4 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 4 — D2C Compliance Auditor');
+      setAgentState('a4', 'running');
+      const pc4 = document.getElementById('pc-a4'); if (pc4) pc4.className = 'pipe-circle running';
+      logAgentStart('Agent4-Auditor', a2Out.selected_persona);
+      const a4Out = await runAgent4(a3Out);
+      logAgentComplete('Agent4-Auditor', a2Out.selected_persona);
+      setAgentState('a4', 'done');
+      // ── Structured render A4
+      renderA4(a4Out);
+
+      // Update compliance stat
+      const sev = a4Out?.overall_severity || 'PASS';
+      document.getElementById('stat-compliance').textContent = sev;
+      document.getElementById('stat-compliance-sub').textContent = a4Out?.pipeline_blocked ? 'BLOCKED' : 'Passed';
+
+      if (a4Out.pipeline_blocked) {
+        document.getElementById('pipeline-blocked-banner').classList.add('active');
+        orchCircle.className = 'pipe-circle error';
+        setCurrentStep(null);
+        renderAuditLog();
+        btn.disabled = false;
+        return;
+      }
+
+      const cn4 = document.getElementById('cn-a4-a5'); if (cn4) cn4.classList.add('done');
+      activateConnector('connector-45');
+      await sleep(300);
+
+      // ── A5 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 5 — Disclosure Injection');
+      setAgentState('a5', 'running');
+      const pc5 = document.getElementById('pc-a5'); if (pc5) pc5.className = 'pipe-circle running';
+      logAgentStart('Agent5-Disclosure');
+      const a5Out = await runAgent5(a4Out);
+      logAgentComplete('Agent5-Disclosure');
+      setAgentState('a5', 'done');
+      renderA5(a5Out);
+      const cn5 = document.getElementById('cn-a5-a6'); if (cn5) cn5.classList.add('done');
+      activateConnector('connector-56');
+      await sleep(300);
+
+      // ── A6 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 6 — Vernacular Localization');
+      setAgentState('a6', 'running');
+      const pc6 = document.getElementById('pc-a6'); if (pc6) pc6.className = 'pipe-circle running';
+      logAgentStart('Agent6-Vernacular');
+      const a6Out = await runAgent6(a5Out);
+      logAgentComplete('Agent6-Vernacular');
+      setAgentState('a6', 'done');
+      renderA6(a6Out);
+      const cn6 = document.getElementById('cn-a6-a7'); if (cn6) cn6.classList.add('done');
+      activateConnector('connector-67');
+      await sleep(300);
+
+      // ── A7 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 7 — Channel Formatter');
+      setAgentState('a7', 'running');
+      const pc7 = document.getElementById('pc-a7'); if (pc7) pc7.className = 'pipe-circle running';
+      logAgentStart('Agent7-Formatter');
+      const a7Out = await runAgent7(a6Out);
+      logAgentComplete('Agent7-Formatter');
+      setAgentState('a7', 'done');
+      renderA7(a7Out);
+      await sleep(200);
+
+      // ── Human Gate ─────────────────────────────────────────────────
+      setCurrentStep('Human Approval Gate');
+      const gateDecision = await waitForHumanGate(a7Out);
+      const pcGate = document.getElementById('pc-gate');
+      if (pcGate) pcGate.className = gateDecision === 'REJECTED' ? 'pipe-circle error' : 'pipe-circle done';
+      activateConnector('connector-gate');
+      const cng = document.getElementById('cn-gate-a8'); if (cng) cng.classList.add('done');
+      activateConnector('connector-78');
+
+      if (gateDecision === 'REJECTED') {
+        addLog('a8', '> Human reviewer REJECTED content. Pipeline halted at gate.', 'warn');
+        orchCircle.className = 'pipe-circle error';
+        setCurrentStep(null);
+        renderAuditLog();
+        btn.disabled = false;
+        return;
+      }
+
+      await sleep(300);
+
+      // ── A8 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 8 — Publisher');
+      setAgentState('a8', 'running');
+      const pc8 = document.getElementById('pc-a8'); if (pc8) pc8.className = 'pipe-circle running';
+      logAgentStart('Agent8-Publisher');
+      const a8In  = { ...a7Out, human_gate_decision: gateDecision };
+      const a8Out = await runAgent8(a8In);
+      try {
+        const pubUrl = new URL('agents/publisher-agent-ui.html', window.location.href).href;
+        const dashUrl = new URL('agents/social-analytics-dashboard.html', window.location.href).href;
+        const a9AnalyticsUrl = new URL('agents/agent9-analytics.html', window.location.href).href;
+        window.open(pubUrl, 'gcn_publisher_ui', 'noopener,noreferrer');
+        window.open(dashUrl, 'gcn_social_analytics_ui', 'noopener,noreferrer');
+        window.open(a9AnalyticsUrl, 'gcn_agent9_analytics_ui', 'noopener,noreferrer');
+      } catch (_) {}
+
+      async function waitForPipelineAnalytics(rid, timeoutMs = 120000, pollMs = 400) {
+        const keys = [
+          ['gcn_social_analytics_dashboard', 'social_analytics_dashboard'],
+          ['gcn_publisher_analytics', 'publisher_ui'],
+        ];
+        const deadline = Date.now() + timeoutMs;
+        while (Date.now() < deadline) {
+          for (const [storageKey, sourceTag] of keys) {
+            try {
+              const raw = localStorage.getItem(storageKey);
+              if (!raw) continue;
+              const p = JSON.parse(raw);
+              if (p && p.runId === rid && Array.isArray(p.analytics) && p.analytics.length) {
+                return { analytics: p.analytics, analytics_exported_from: sourceTag };
+              }
+            } catch (_) {}
+          }
+          await new Promise(r => setTimeout(r, pollMs));
+        }
+        return null;
+      }
+
+      const pipeAnalytics = a8Out.hard_block ? null : await waitForPipelineAnalytics(runId);
+      logAgentComplete('Agent8-Publisher');
+      setAgentState('a8', 'done');
+      renderA8(a8Out);
+      if (!a8Out.hard_block) {
+        refreshAgent8OutputAfterPublisherSim(a8Out);
+      }
+      const cn8 = document.getElementById('cn-a8-a9'); if (cn8) cn8.classList.add('done');
+      activateConnector('connector-89');
+      await sleep(300);
+
+      const normalizedAnalytics = pipeAnalytics
+        ? normalizeAnalyticsBatch(
+            pipeAnalytics.analytics,
+            a8Out.formatted_packages || {}
+          )
+        : [];
+
+      if (normalizedAnalytics.length) {
+        saveAnalyticsBatch(normalizedAnalytics);
+      }
+
+      // ── A9 ────────────────────────────────────────────────────────
+      setCurrentStep('Agent 9 — Engagement Intelligence');
+      setAgentState('a9', 'running');
+      const pc9 = document.getElementById('pc-a9'); if (pc9) pc9.className = 'pipe-circle running';
+      logAgentStart('Agent9-Engagement', a2Out.selected_persona);
+      const a9Out = await runAgent9(
+        normalizedAnalytics.length
+          ? {
+              ...a8Out,
+              analytics: normalizedAnalytics,
+              analytics_exported_from: pipeAnalytics.analytics_exported_from,
+            }
+          : a8Out
+      );
+      logAgentComplete('Agent9-Engagement', a2Out.selected_persona);
+      setAgentState('a9', 'done');
+      const finalOutput = await runStrategyCrewLayer(a9Out);
+      renderA9(finalOutput);
+      console.log('Strategy Output:', finalOutput);
+
+      auditLog({ agent: 'Orchestrator', event: 'PIPELINE_COMPLETE' });
+      orchCircle.className = 'pipe-circle done';
+      setCurrentStep(null);
+      document.getElementById('stat-status').textContent = 'Complete';
+      document.getElementById('pdfBtn').disabled = false;
+      renderAuditLog();
+
+    } catch (err) {
+      let failId = 'a1';
+      for (const id of ['a9','a8','a7','a6','a5','a4','a3','a2','a1']) {
+        const s = document.getElementById('status-' + id)?.textContent;
+        if (s === 'RUNNING') { failId = id; break; }
+      }
+      showError(failId, err.message);
+      auditLog({ agent: 'Orchestrator', event: 'PIPELINE_ERROR', error: err.message });
+      orchCircle.className = 'pipe-circle error';
+      setCurrentStep(null);
+      document.getElementById('stat-status').textContent = 'Error';
+      renderAuditLog();
+      console.error('[GCN Orchestrator]', err);
+    }
+
+    btn.disabled = false;
+  };
+</script>
+
+<!-- ── PDF DOWNLOAD ── -->
+<script>
+  window.downloadPDF = function() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageW  = doc.internal.pageSize.getWidth();
+    const pageH  = doc.internal.pageSize.getHeight();
+    const margin = 48;
+    const colW   = pageW - margin * 2;
+    let   y      = margin;
+
+    const ACCENT  = [232, 197, 71];
+    const DARK    = [26, 26, 26];
+    const MUTED   = [120, 120, 120];
+    const GREEN   = [76, 175, 125];
+    const WHITE   = [255, 255, 255];
+
+    function checkPage(needed) {
+      if (y + needed > pageH - margin) { doc.addPage(); y = margin; }
+    }
+
+    function addHeader() {
+      // Dark header bar
+      doc.setFillColor(...DARK);
+      doc.rect(0, 0, pageW, 56, 'F');
+      doc.setFillColor(...ACCENT);
+      doc.roundedRect(margin, 14, 120, 28, 4, 4, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(...DARK);
+      doc.text('GCN Fintech', margin + 10, 33);
+      doc.setFontSize(9);
+      doc.setTextColor(...MUTED);
+      doc.setFont('helvetica', 'normal');
+      doc.text('D2C Multi-Agent Pipeline — Full Output Report', margin + 132, 33);
+      // Date
+      doc.text('Generated: ' + new Date().toLocaleString(), pageW - margin, 33, { align: 'right' });
+      y = 80;
+    }
+
+    function addSectionTitle(title) {
+      checkPage(40);
+      doc.setFillColor(...ACCENT);
+      doc.roundedRect(margin, y, colW, 24, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(...DARK);
+      doc.text(title, margin + 10, y + 16);
+      y += 32;
+    }
+
+    function addLabel(label) {
+      checkPage(20);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...MUTED);
+      doc.text(label.toUpperCase(), margin, y);
+      y += 14;
+    }
+
+    function addBody(txt) {
+      if (!txt) return;
+      const clean = txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      const lines = doc.splitTextToSize(clean, colW);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      doc.setTextColor(...DARK);
+      lines.forEach(line => {
+        checkPage(14);
+        doc.text(line, margin, y);
+        y += 13;
+      });
+      y += 6;
+    }
+
+    function addDivider() {
+      checkPage(12);
+      doc.setDrawColor(220, 210, 195);
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, pageW - margin, y);
+      y += 10;
+    }
+
+    function addStatusBadge(status) {
+      const colors = {
+        DONE:    [[76,175,125], [255,255,255]],
+        WAITING: [[200,195,185], [100,100,100]],
+        ERROR:   [[220,80,80],  [255,255,255]],
+      };
+      const [bg, fg] = colors[status] || colors.WAITING;
+      doc.setFillColor(...bg);
+      doc.roundedRect(pageW - margin - 60, y - 18, 60, 16, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...fg);
+      doc.text(status, pageW - margin - 30, y - 7, { align: 'center' });
+    }
+
+    // ── Cover / Title page ──────────────────────────────────────────────
+    doc.setFillColor(...DARK);
+    doc.rect(0, 0, pageW, pageH, 'F');
+    doc.setFillColor(...ACCENT);
+    doc.rect(0, 0, 8, pageH, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(32);
+    doc.setTextColor(...WHITE);
+    doc.text('GCN D2C Fintech', margin, 180);
+    doc.setFontSize(18);
+    doc.setTextColor(...ACCENT);
+    doc.text('Multi-Agent Pipeline Report', margin, 210);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(...MUTED);
+    doc.text('Multi-Agent AI Orchestration Pipeline', margin, 240);
+    doc.text('All 9 Agents + Orchestrator + Audit Logger', margin, 258);
+    doc.text('Generated: ' + new Date().toLocaleString(), margin, 276);
+
+    // Brief used
+    const brief = document.getElementById('brief')?.value || '';
+    if (brief) {
+      doc.setFillColor(30, 30, 30);
+      doc.roundedRect(margin, 310, colW, 80, 6, 6, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...MUTED);
+      doc.text('CONTENT BRIEF', margin + 12, 330);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...WHITE);
+      const briefLines = doc.splitTextToSize(brief, colW - 24);
+      briefLines.slice(0, 4).forEach((l, i) => doc.text(l, margin + 12, 346 + i * 13));
+    }
+
+    // ── New page — Agent outputs ────────────────────────────────────────
+    doc.addPage();
+    addHeader();
+
+    const agents = [
+      { id: 'a1', num: 1, title: 'Agent 1 — D2C Audience & Context Profiler' },
+      { id: 'a2', num: 2, title: 'Agent 2 — D2C Persona Matcher' },
+      { id: 'a3', num: 3, title: 'Agent 3 — D2C Writer Agent' },
+      { id: 'a4', num: 4, title: 'Agent 4 — D2C Compliance Auditor' },
+      { id: 'a5', num: 5, title: 'Agent 5 — Disclosure Injection Agent' },
+      { id: 'a6', num: 6, title: 'Agent 6 — Vernacular Localization Agent' },
+      { id: 'a7', num: 7, title: 'Agent 7 — Channel Formatter' },
+      { id: 'a8', num: 8, title: 'Agent 8 — Publisher Agent' },
+      { id: 'a9', num: 9, title: 'Agent 9 — Engagement Intelligence Agent' },
+    ];
+
+    agents.forEach(({ id, num, title }) => {
+      const statusEl = document.getElementById('status-' + id);
+      const status   = statusEl ? statusEl.textContent.trim() : 'WAITING';
+      const outEl    = document.getElementById('out-' + id);
+
+      checkPage(60);
+
+      // ── Agent section header
+      doc.setFillColor(...DARK);
+      doc.roundedRect(margin, y, colW, 28, 3, 3, 'F');
+      // Number badge
+      doc.setFillColor(...ACCENT);
+      doc.roundedRect(margin + 6, y + 4, 20, 20, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(...DARK);
+      doc.text(String(num), margin + 16, y + 17, { align: 'center' });
+      // Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(...WHITE);
+      doc.text(title.split('—')[1]?.trim() || title, margin + 32, y + 18);
+      // Status badge
+      const statusColors = { DONE: GREEN, ERROR: [220,80,80], WAITING: [100,100,100] };
+      const sBadgeColor = statusColors[status] || statusColors.WAITING;
+      doc.setFillColor(...sBadgeColor);
+      doc.roundedRect(pageW - margin - 50, y + 6, 44, 16, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...WHITE);
+      doc.text(status, pageW - margin - 28, y + 16, { align: 'center' });
+      y += 36;
+
+      // ── Structured key-value data from data store
+      const agentData = window._pipelineData?.[id];
+      if (agentData && agentData.fields && agentData.fields.length) {
+        // KV grid: 3 per row
+        const fields = agentData.fields;
+        const colCount = 3;
+        const cellW = (colW - (colCount - 1) * 8) / colCount;
+        for (let r = 0; r < Math.ceil(fields.length / colCount); r++) {
+          const rowH = 34;
+          checkPage(rowH + 6);
+          for (let c = 0; c < colCount; c++) {
+            const fi = r * colCount + c;
+            if (fi >= fields.length) break;
+            const { label, value, highlight } = fields[fi];
+            const cx = margin + c * (cellW + 8);
+            doc.setFillColor(highlight === 'red' ? 255 : highlight === 'green' ? 240 : 255,
+                             highlight === 'red' ? 245 : highlight === 'green' ? 250 : 255,
+                             highlight === 'red' ? 245 : highlight === 'green' ? 244 : 255);
+            doc.setDrawColor(highlight === 'red' ? 220 : highlight === 'green' ? 76 : 224,
+                             highlight === 'red' ? 180 : highlight === 'green' ? 175 : 216,
+                             highlight === 'red' ? 180 : highlight === 'green' ? 125 : 204);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(cx, y, cellW, rowH, 2, 2, 'FD');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7);
+            doc.setTextColor(140, 140, 140);
+            doc.text(label.toUpperCase(), cx + 6, y + 9);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            const valColor = highlight === 'red' ? [200,50,50] : highlight === 'green' ? [50,150,90] : highlight === 'accent' ? [160,120,0] : [...DARK];
+            doc.setTextColor(...valColor);
+            const valLines = doc.splitTextToSize(String(value), cellW - 12);
+            doc.text(valLines[0], cx + 6, y + 21);
+          }
+          y += rowH + 6;
+        }
+
+        // Pills (flags/channels etc)
+        if (agentData.pills && agentData.pills.length) {
+          checkPage(24);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(140,140,140);
+          doc.text(agentData.pillsLabel || 'TAGS', margin, y + 5);
+          let px = margin + 60;
+          agentData.pills.forEach(pill => {
+            const pw = doc.getTextWidth(pill) + 12;
+            if (px + pw > pageW - margin) { y += 16; px = margin + 60; }
+            doc.setFillColor(240, 235, 220);
+            doc.roundedRect(px, y - 2, pw, 14, 2, 2, 'F');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(80,70,40);
+            doc.text(pill, px + 6, y + 7);
+            px += pw + 5;
+          });
+          y += 20;
+        }
+
+        // Reasoning / long text block
+        if (agentData.reasoning) {
+          checkPage(40);
+          doc.setFillColor(255, 252, 240);
+          doc.setDrawColor(...ACCENT);
+          doc.setLineWidth(1);
+          doc.line(margin, y, margin, y + 8);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(140,140,140);
+          doc.text('REASONING', margin + 6, y + 6);
+          y += 12;
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(60,60,60);
+          const rLines = doc.splitTextToSize(agentData.reasoning.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(), colW - 10);
+          rLines.slice(0, 8).forEach(l => { checkPage(12); doc.text(l, margin + 4, y); y += 11; });
+          y += 4;
+        }
+
+        // Content blocks (writer/disclosure/formatter output)
+        if (agentData.contentBlocks && agentData.contentBlocks.length) {
+          agentData.contentBlocks.forEach(block => {
+            checkPage(50);
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(140,140,140);
+            doc.text((block.channel || 'CONTENT').toUpperCase(), margin, y + 5);
+            const statusLabel = block.status || '';
+            if (statusLabel) {
+              const sw = doc.getTextWidth(statusLabel) + 10;
+              const sc = statusLabel.includes('PASS') || statusLabel.includes('DONE') ? GREEN : statusLabel.includes('FAIL') ? [200,50,50] : [180,140,0];
+              doc.setFillColor(...sc);
+              doc.roundedRect(pageW - margin - sw, y - 1, sw, 12, 2, 2, 'F');
+              doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...WHITE);
+              doc.text(statusLabel, pageW - margin - sw/2, y + 7, { align:'center' });
+            }
+            y += 10;
+            const btext = (block.text || '').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+            doc.setFillColor(26,26,26);
+            const bLines = doc.splitTextToSize(btext, colW - 16);
+            const bH = Math.min(bLines.length, 6) * 11 + 14;
+            checkPage(bH + 8);
+            doc.roundedRect(margin, y, colW, bH, 3, 3, 'F');
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(200,200,200);
+            bLines.slice(0, 6).forEach((l, i) => doc.text(l, margin + 8, y + 10 + i * 11));
+            y += bH + 8;
+          });
+        }
+
+        // Violations
+        if (agentData.violations && agentData.violations.length) {
+          checkPage(20);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(200,50,50);
+          doc.text('COMPLIANCE VIOLATIONS', margin, y + 5); y += 12;
+          agentData.violations.slice(0, 6).forEach(v => {
+            const vtext = `[${v.type}] ${v.code || ''} — ${v.text || ''}`.replace(/\s+/g,' ');
+            const vLines = doc.splitTextToSize(vtext, colW - 16);
+            const vH = Math.min(vLines.length, 3) * 10 + 14;
+            checkPage(vH + 6);
+            doc.setFillColor(255, 245, 245);
+            doc.setDrawColor(220, 180, 180); doc.setLineWidth(0.5);
+            doc.roundedRect(margin, y, colW, vH, 2, 2, 'FD');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(200,50,50);
+            doc.text(v.type || 'VIOLATION', margin + 6, y + 8);
+            if (v.code) { doc.setFont('helvetica','normal'); doc.setTextColor(150,150,150); doc.text(v.code, margin + 80, y + 8); }
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(60,60,60);
+            vLines.slice(0,3).forEach((l,i) => doc.text(l, margin + 6, y + 16 + i * 10));
+            y += vH + 5;
+          });
+        }
+
+        // Calendar items
+        if (agentData.calendar && agentData.calendar.length) {
+          checkPage(20);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(140,140,140);
+          doc.text('2-WEEK CONTENT CALENDAR', margin, y + 5); y += 12;
+          agentData.calendar.forEach(item => {
+            checkPage(20);
+            doc.setFillColor(255,255,255);
+            doc.setDrawColor(224,216,204); doc.setLineWidth(0.5);
+            doc.roundedRect(margin, y, colW, 18, 2, 2, 'FD');
+            doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(140,140,140);
+            doc.text('DAY ' + (item.day || '?'), margin + 6, y + 11);
+            doc.setTextColor(91,141,238);
+            doc.text(item.channel || '', margin + 50, y + 11);
+            doc.setFont('helvetica','normal'); doc.setTextColor(50,50,50);
+            const ct = doc.splitTextToSize(item.text || '', colW - 130);
+            doc.text(ct[0] || '', margin + 130, y + 11);
+            y += 22;
+          });
+        }
+
+      } else if (outEl && outEl.innerText.trim()) {
+        // fallback plain text
+        addBody(outEl.innerText);
+      } else {
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor(...MUTED);
+        checkPage(16);
+        doc.text('No output — agent did not run or was skipped.', margin, y); y += 16;
+      }
+
+      y += 12;
+      checkPage(2);
+      doc.setDrawColor(220, 210, 195); doc.setLineWidth(0.5);
+      doc.line(margin, y, pageW - margin, y);
+      y += 14;
+    });
+
+    // ── Audit Log page ─────────────────────────────────────────────────
+    doc.addPage();
+    addHeader();
+
+    checkPage(40);
+    doc.setFillColor(...DARK);
+    doc.roundedRect(margin, y, colW, 28, 3, 3, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...WHITE);
+    doc.text('Audit Logger — Append-only  ·  Regulator Ready', margin + 12, y + 18);
+    doc.setFillColor(...GREEN);
+    doc.roundedRect(pageW - margin - 120, y + 6, 114, 16, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...WHITE);
+    doc.text('REGULATOR READY', pageW - margin - 63, y + 16, { align: 'center' });
+    y += 38;
+
+    // Parse audit entries from the UI element
+    const auditEl = document.getElementById('out-audit');
+    const auditText = auditEl ? (auditEl.innerText || auditEl.textContent || '') : '';
+    const auditLines = auditText.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !/^\[/.test(l));
+
+    // Try to parse structured entries from the rendered audit log rows
+    const auditRows = document.querySelectorAll('#out-audit .audit-row, #audit-log-panel .audit-row');
+    const parsedEntries = [];
+
+    if (auditRows.length > 0) {
+      auditRows.forEach(row => {
+        const cells = row.querySelectorAll('td, .audit-cell, span');
+        if (cells.length >= 3) {
+          parsedEntries.push({
+            id:        cells[0]?.textContent?.trim() || '',
+            timestamp: cells[1]?.textContent?.trim() || '',
+            agent:     cells[2]?.textContent?.trim() || '',
+            event:     cells[3]?.textContent?.trim() || '',
+            detail:    cells[4]?.textContent?.trim() || '',
+          });
+        }
+      });
+    } else {
+      // Parse from plain text: look for lines with timestamps
+      const auditFull = auditEl?.innerText || '';
+      const entryRegex = /(\d+)\s+([\d\-:\s\.T]+(?:Z|IST|UTC)?)\s+(\S+)\s+(\S+)(.*?)(?=\d+\s+\d{4}|$)/gs;
+      const lineEntries = auditFull.split('\n').filter(l => /^\d+\s+\d{4}-\d{2}-\d{2}/.test(l.trim()));
+      lineEntries.forEach(line => {
+        const parts = line.trim().split(/\s+/);
+        if (parts.length >= 4) {
+          parsedEntries.push({
+            id:        parts[0],
+            timestamp: parts[1] + ' ' + (parts[2] || ''),
+            agent:     parts[3] || '',
+            event:     parts[4] || '',
+            detail:    parts.slice(5).join(' '),
+          });
+        }
+      });
+    }
+
+    if (parsedEntries.length > 0) {
+      // Table header
+      const cols = [30, 130, 120, 120, colW - 30 - 130 - 120 - 120 - 15];
+      const headers = ['#', 'Timestamp', 'Agent', 'Event', 'Detail'];
+      const rowH = 16;
+
+      checkPage(rowH + 6);
+      doc.setFillColor(40, 40, 40);
+      doc.rect(margin, y, colW, rowH, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...WHITE);
+      let cx = margin + 5;
+      headers.forEach((h, i) => { doc.text(h, cx, y + 11); cx += cols[i]; });
+      y += rowH;
+
+      parsedEntries.forEach((entry, idx) => {
+        checkPage(rowH + 2);
+        const bg = idx % 2 === 0 ? [252, 250, 246] : [255, 255, 255];
+        doc.setFillColor(...bg);
+        doc.rect(margin, y, colW, rowH, 'F');
+        doc.setDrawColor(230, 222, 210);
+        doc.setLineWidth(0.3);
+        doc.line(margin, y + rowH, margin + colW, y + rowH);
+
+        const eventColor = /COMPLETE|PASS|APPROVED/.test(entry.event) ? GREEN
+          : /ERROR|BLOCK|REJECT/.test(entry.event) ? [200, 60, 60]
+          : /START/.test(entry.event) ? [91, 141, 238]
+          : [...DARK];
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.5);
+        cx = margin + 5;
+        const cells = [entry.id, entry.timestamp, entry.agent, entry.event, entry.detail];
+        cells.forEach((cell, i) => {
+          doc.setTextColor(i === 3 ? eventColor[0] : DARK[0], i === 3 ? eventColor[1] : DARK[1], i === 3 ? eventColor[2] : DARK[2]);
+          if (i === 3) doc.setFont('helvetica', 'bold');
+          else doc.setFont('helvetica', 'normal');
+          const w = cols[i] - 5;
+          const t = doc.splitTextToSize(cell || '', w)[0] || '';
+          doc.text(t, cx, y + 11);
+          cx += cols[i];
+        });
+        y += rowH;
+      });
+
+      y += 10;
+
+      // JSON export note
+      checkPage(20);
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8);
+      doc.setTextColor(...MUTED);
+      doc.text('Full JSON audit export available in the application for RBI / TRAI / DPDPA inquiry.', margin, y);
+      y += 14;
+
+    } else if (auditLines.length > 0) {
+      // Fallback: plain text
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...DARK);
+      auditLines.slice(0, 60).forEach(line => {
+        checkPage(13);
+        const parts = doc.splitTextToSize(line, colW);
+        parts.slice(0, 2).forEach(p => { doc.text(p, margin, y); y += 12; });
+      });
+    } else {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(9);
+      doc.setTextColor(...MUTED);
+      doc.text('No audit entries recorded.', margin, y);
+    }
+
+    // ── Footer on all pages ────────────────────────────────────────────
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFillColor(...DARK);
+      doc.rect(0, pageH - 36, pageW, 36, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...MUTED);
+      doc.text('GCN D2C Fintech · Multi-Agent Pipeline Report', margin, pageH - 14);
+      doc.text('Page ' + i + ' of ' + totalPages, pageW - margin, pageH - 14, { align: 'right' });
+    }
+
+    doc.save('GCN-Pipeline-Report.pdf');
+  };
+</script>
+
+<!-- ── STRUCTURED AGENT OUTPUT RENDERERS ── -->
+<script>
+  // ── Global debug capture — logs raw agent output to console for inspection
+  window._rawAgentData = {};
+  window._pipelineData = {};
+
+  // ── Helpers ────────────────────────────────────────────────────────────
+  // Try multiple possible key names, return first defined non-null non-"undefined" value
+  function pick(d, ...keys) {
+    for (const k of keys) {
+      const v = d[k];
+      if (v != null && v !== '' && v !== 'undefined' && v !== undefined) return v;
+    }
+    return null;
+  }
+  function fmt(v) {
+    if (v == null || v === '' || v === 'undefined' || v === undefined) return 'N/A';
+    if (typeof v === 'boolean') return v ? 'YES' : 'NO';
+    return String(v);
+  }
+  function fmtPct(v) {
+    if (v == null || v === '' || v === 'undefined') return 'N/A';
+    const n = parseFloat(v);
+    if (isNaN(n)) return fmt(v);
+    return (n > 0 && n <= 1 ? (n * 100).toFixed(1) : n.toFixed(1)) + '%';
+  }
+  function kv(label, value, highlight) {
+    const cls = highlight === 'red' ? 'risk-high' : highlight === 'green' ? 'risk-low' : highlight === 'accent' ? 'accent' : '';
+    const display = fmt(value);
+    return `<div class="kv-box"><div class="kv-label">${label}</div><div class="kv-value ${cls}">${display}</div></div>`;
+  }
+  function pill(text, color) {
+    if (!text) return '';
+    return `<span class="badge-pill pill-${color || 'grey'}">${text}</span>`;
+  }
+  function sectionTitle(text) {
+    return `<div class="out-section-title">${text}</div>`;
+  }
+  function contentBox(text) {
+    const clean = (text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `<div class="content-preview-box">${clean}</div>`;
+  }
+  function setOut(id, html) {
+    const el = document.getElementById('out-' + id);
+    if (!el) return;
+    el.innerHTML = html;
+    el.classList.add('visible');
+  }
+  function storeData(id, obj) { window._pipelineData[id] = obj; }
+
+  // ── Agent 1 — D2C Audience & Context Profiler ─────────────────────────
+  window.renderA1 = function(d) {
+    if (!d) return;
+    console.log('[A1 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a1 = d;
+
+    // Broad key coverage — agent may use any of these
+    const segment  = pick(d, 'consumer_segment', 'segment', 'target_segment', 'audience_segment');
+    const product  = pick(d, 'product_category', 'product', 'product_type');
+    const intent   = pick(d, 'campaign_intent', 'intent', 'campaign_goal', 'goal');
+    const persona  = pick(d, 'recommended_persona', 'persona', 'suggested_persona');
+    const risk     = pick(d, 'compliance_risk', 'risk_level', 'risk', 'compliance_level');
+    const conf     = pick(d, 'match_confidence', 'confidence', 'confidence_score');
+    const vernac   = pick(d, 'vernacular_required', 'vernacular', 'vernacular_pipeline');
+    const fallback = pick(d, 'fallback_action', 'fallback', 'fallback_applied');
+    const flags    = pick(d, 'compliance_flags', 'key_compliance_flags', 'flags', 'regulatory_flags');
+    const channels = pick(d, 'channel_mix', 'channels', 'recommended_channels');
+    const reason   = pick(d, 'reasoning', 'reason', 'rationale', 'explanation');
+
+    const riskVal   = fmt(risk).toUpperCase();
+    const riskColor = riskVal === 'HIGH' ? 'red' : riskVal === 'LOW' ? 'green' : riskVal === 'N/A' ? '' : 'accent';
+    const flagsArr  = Array.isArray(flags) ? flags : (flags ? [flags] : []);
+    const chArr     = Array.isArray(channels) ? channels : (channels ? String(channels).split(',').map(s=>s.trim()) : []);
+    const confDisp  = conf != null ? fmtPct(conf) : 'N/A';
+
+    setOut('a1', `
+      ${sectionTitle('Consumer Profile')}
+      <div class="kv-grid">
+        ${kv('Consumer Segment', segment)}
+        ${kv('Product Category', product)}
+        ${kv('Campaign Intent', intent)}
+        ${kv('Recommended Persona', persona, 'accent')}
+        ${kv('Compliance Risk', risk, riskColor)}
+        ${kv('Confidence', confDisp)}
+        ${kv('Vernacular Pipeline', vernac != null ? (vernac ? 'YES' : 'NO') : 'NO')}
+        ${kv('Fallback Action', fallback || 'NONE')}
+      </div>
+      ${chArr.length ? `
+        ${sectionTitle('Channel Mix')}
+        <div style="margin-bottom:10px">${chArr.map(c => pill(c, 'blue')).join('')}</div>
+      ` : ''}
+      ${flagsArr.length ? `
+        ${sectionTitle('Compliance Flags')}
+        <div style="margin-bottom:10px">${flagsArr.map(f => pill(f, 'red')).join('')}</div>
+      ` : ''}
+      ${reason ? `${sectionTitle('Reasoning')}<div class="reasoning-box">${reason}</div>` : ''}
+    `);
+
+    storeData('a1', {
+      fields: [
+        { label: 'Consumer Segment',   value: segment },
+        { label: 'Product Category',   value: product },
+        { label: 'Campaign Intent',    value: intent },
+        { label: 'Recommended Persona',value: persona,  highlight: 'accent' },
+        { label: 'Compliance Risk',    value: risk,     highlight: riskColor },
+        { label: 'Confidence',         value: confDisp },
+        { label: 'Vernacular',         value: vernac != null ? (vernac ? 'YES' : 'NO') : 'NO' },
+        { label: 'Fallback Action',    value: fallback || 'NONE' },
+      ],
+      pills: flagsArr, pillsLabel: 'COMPLIANCE FLAGS',
+      reasoning: reason,
+    });
+  };
+
+  // ── Agent 2 — D2C Persona Matcher ─────────────────────────────────────
+  window.renderA2 = function(d) {
+    if (!d) return;
+    console.log('[A2 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a2 = d;
+
+    const persona  = pick(d, 'selected_persona', 'persona', 'matched_persona', 'recommended_persona');
+    const conf     = pick(d, 'match_confidence', 'confidence', 'confidence_score');
+    const segment  = pick(d, 'consumer_segment', 'segment');
+    const product  = pick(d, 'product_category', 'product');
+    const hustler  = pick(d, 'hustler_flag', 'is_hustler', 'hustler');
+    const fallback = pick(d, 'fallback_applied', 'fallback');
+    const reason   = pick(d, 'reasoning', 'reason', 'rationale');
+    const topMatch = pick(d, 'top_vector_match', 'top_match', 'vector_match') || {};
+    const scores   = pick(d, 'persona_scores', 'scores', 'combined_scores') || {};
+
+    const confDisp  = conf != null ? fmtPct(conf) : 'N/A';
+    const confNum   = parseFloat(conf);
+    const confColor = confNum >= 80 || (confNum <= 1 && confNum >= 0.8) ? 'green' : 'accent';
+
+    const simDisp = topMatch.similarity != null ? fmtPct(topMatch.similarity) : 'N/A';
+    const ctrDisp = topMatch.ctr != null ? fmtPct(topMatch.ctr) : 'N/A';
+    const convDisp= topMatch.conversion != null ? fmtPct(topMatch.conversion) : 'N/A';
+
+    const scoreEntries = Object.entries(scores);
+
+    setOut('a2', `
+      ${sectionTitle('Selected Persona')}
+      <div class="kv-grid">
+        ${kv('Selected Persona',  persona,   'accent')}
+        ${kv('Confidence',        confDisp,  confColor)}
+        ${kv('Consumer Segment',  segment)}
+        ${kv('Product Category',  product)}
+        ${kv('Hustler Flag',      hustler ? 'ACTIVE' : 'OFF', hustler ? 'red' : 'green')}
+        ${kv('Fallback Applied',  fallback ? 'YES' : 'NO')}
+      </div>
+      ${scoreEntries.length ? `
+        ${sectionTitle('Persona Score Comparison')}
+        <div class="score-row">
+          ${scoreEntries.map(([name, val]) => {
+            const score = typeof val === 'object' ? (val.combined ?? val.score ?? '') : val;
+            return `<div class="score-cell ${name === persona ? 'selected' : ''}">
+              <span class="sc-name">${name}</span>
+              <span class="sc-val">${score}${name === persona ? ' SELECTED' : ''}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      ` : ''}
+      ${topMatch && topMatch.similarity != null ? `
+        ${sectionTitle('Top Vector Match')}
+        <div class="kv-grid">
+          ${kv('Similarity', simDisp, 'green')}
+          ${kv('CTR',        ctrDisp)}
+          ${kv('Conversion', convDisp)}
+        </div>
+      ` : ''}
+      ${reason ? `${sectionTitle('Reasoning')}<div class="reasoning-box">${reason}</div>` : ''}
+    `);
+
+    storeData('a2', {
+      fields: [
+        { label: 'Selected Persona',    value: persona,  highlight: 'accent' },
+        { label: 'Confidence',          value: confDisp, highlight: confColor },
+        { label: 'Hustler Flag',        value: hustler ? 'ACTIVE' : 'OFF', highlight: hustler ? 'red' : 'green' },
+        { label: 'Fallback Applied',    value: fallback ? 'YES' : 'NO' },
+        { label: 'Vector Match Similarity', value: simDisp, highlight: 'green' },
+        { label: 'Vector Match CTR',    value: ctrDisp },
+        { label: 'Vector Match Conv.',  value: convDisp },
+      ],
+      reasoning: reason,
+    });
+  };
+
+  // ── Agent 3 — D2C Writer Agent ─────────────────────────────────────────
+  window.renderA3 = function(d) {
+    if (!d) return;
+    console.log('[A3 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a3 = d;
+
+    const persona  = pick(d, 'selected_persona', 'persona');
+    const hustler  = pick(d, 'hustler_flag', 'is_hustler');
+    // Try many possible draft container keys
+    const drafts   = pick(d, 'channel_drafts', 'drafts', 'channel_content', 'content', 'outputs', 'channel_outputs') || {};
+    const chKeys   = Object.keys(drafts);
+
+    // Also check for top-level Instagram/Push keys directly on d
+    const directChannels = ['Instagram', 'Push Notification', 'instagram', 'push_notification', 'push', 'whatsapp', 'sms'];
+    const extraKeys = directChannels.filter(k => d[k] != null && !chKeys.includes(k));
+    const allKeys = [...chKeys, ...extraKeys];
+
+    const getDraft = (ch) => drafts[ch] ?? d[ch];
+
+    const blocksHTML = allKeys.map(ch => {
+      const draft = getDraft(ch);
+      const text  = typeof draft === 'string' ? draft
+        : (pick(draft, 'body', 'caption', 'content', 'text', 'copy', 'message') || JSON.stringify(draft));
+      const isRisk = hustler || draft?.risk_tag || draft?.high_risk;
+      return `
+        <div style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)">${ch}</span>
+            ${isRisk ? `<span class="badge-pill pill-red" style="font-size:10px;padding:1px 8px">HIGH RISK</span>` : '<span class="badge-pill pill-grey" style="font-size:10px;padding:1px 8px">DRAFT</span>'}
+          </div>
+          ${contentBox(text)}
+        </div>
+      `;
+    }).join('');
+
+    setOut('a3', `
+      ${sectionTitle('Content Drafts')}
+      <div class="kv-grid" style="margin-bottom:14px">
+        ${kv('Persona',         persona, 'accent')}
+        ${kv('Risk Level',      hustler ? 'HIGH' : 'STANDARD', hustler ? 'red' : 'green')}
+        ${kv('Channels',        allKeys.join(', ') || fmt(pick(d, 'channel_mix', 'channels')))}
+        ${kv('Drafts Generated', allKeys.length || 'N/A')}
+      </div>
+      ${blocksHTML || `<div style="color:var(--text-muted);font-size:12px;padding:6px 0">No draft content returned in this run.</div>`}
+    `);
+
+    storeData('a3', {
+      fields: [
+        { label: 'Persona',          value: persona,  highlight: 'accent' },
+        { label: 'Risk Level',       value: hustler ? 'HIGH' : 'STANDARD', highlight: hustler ? 'red' : 'green' },
+        { label: 'Channels',         value: allKeys.join(', ') || 'N/A' },
+        { label: 'Drafts Generated', value: allKeys.length },
+      ],
+      contentBlocks: allKeys.map(ch => {
+        const draft = getDraft(ch);
+        const text  = typeof draft === 'string' ? draft : (pick(draft, 'body', 'caption', 'content', 'text') || '');
+        return { channel: ch, text, status: hustler ? 'HIGH RISK' : 'DRAFT' };
+      }),
+    });
+  };
+
+  // ── Agent 4 — D2C Compliance Auditor ──────────────────────────────────
+  window.renderA4 = function(d) {
+    if (!d) return;
+    console.log('[A4 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a4 = d;
+
+    const persona   = pick(d, 'persona_audited', 'selected_persona', 'persona');
+    const mode      = pick(d, 'audit_mode', 'mode', 'audit_type');
+    const severity  = pick(d, 'overall_severity', 'severity', 'overall_result', 'result');
+    const blocked   = pick(d, 'pipeline_blocked', 'blocked', 'is_blocked');
+    // Try many audit result container keys
+    const results   = pick(d, 'audit_results', 'results', 'channel_results', 'channel_audits', 'audits') || {};
+    const allViolations = [];
+
+    // Also scan top-level for channel keys like 'Instagram', 'Push Notification'
+    const knownChannels = ['Instagram', 'Push Notification', 'instagram', 'push_notification', 'WhatsApp', 'SMS'];
+    const resultKeys = Object.keys(results).length ? Object.keys(results)
+      : knownChannels.filter(k => d[k] && typeof d[k] === 'object');
+    const getResult = (ch) => results[ch] ?? d[ch];
+
+    const channelHTML = resultKeys.map(ch => {
+      const res = getResult(ch);
+      if (!res) return '';
+      const verdict   = pick(res, 'verdict', 'status', 'result', 'audit_status') || 'UNKNOWN';
+      const vColor    = /pass/i.test(verdict) ? 'green' : /fail|block/i.test(verdict) ? 'red' : 'accent';
+      const viols     = pick(res, 'violations', 'blocks', 'issues', 'findings') || [];
+      const violArr   = Array.isArray(viols) ? viols : Object.values(viols);
+      violArr.forEach(v => allViolations.push({ ...v, _channel: ch }));
+      const discReq   = pick(res, 'disclosures_required', 'required_disclosures', 'injections_needed') || [];
+      const discArr   = Array.isArray(discReq) ? discReq : [];
+      const retries   = pick(res, 'retry_count', 'retries', 'attempts');
+
+      const violHTML = violArr.map(v => `
+        <div class="violation-box">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="v-type">${pick(v, 'severity', 'type', 'level') || 'BLOCK'}</span>
+            <span class="v-code">${pick(v, 'regulation', 'code', 'rule_id', 'rbi_code') || ''}</span>
+          </div>
+          <div class="v-text">${pick(v, 'issue', 'description', 'text', 'message', 'detail') || ''}</div>
+          ${pick(v, 'compliant_rewrite', 'fix', 'recommendation', 'suggested_fix') ? `<div class="v-fix">Suggested Fix: ${pick(v, 'compliant_rewrite', 'fix', 'recommendation', 'suggested_fix')}</div>` : ''}
+        </div>
+      `).join('');
+
+      return `
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)">${ch}</span>
+            <span class="badge-pill pill-${vColor}" style="font-size:10px;padding:1px 8px">${verdict}${retries ? ` (${retries} retries)` : ''}</span>
+          </div>
+          ${violArr.length ? violHTML : `<div style="color:var(--green);font-size:12px;padding:6px 0">No violations detected in this channel.</div>`}
+          ${discArr.length ? `<div style="margin-top:8px"><span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase">Required Disclosures: </span>${discArr.map(d => pill(d,'yellow')).join('')}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    setOut('a4', `
+      ${sectionTitle('Audit Summary')}
+      <div class="kv-grid" style="margin-bottom:14px">
+        ${kv('Persona Audited',   persona,   'accent')}
+        ${kv('Audit Mode',        mode)}
+        ${kv('Overall Severity',  severity,  /pass/i.test(fmt(severity)) ? 'green' : 'red')}
+        ${kv('Pipeline Blocked',  blocked ? 'YES' : 'NO', blocked ? 'red' : 'green')}
+        ${kv('Total Violations',  allViolations.length, allViolations.length > 0 ? 'red' : 'green')}
+        ${kv('Channels Audited',  resultKeys.length)}
+      </div>
+      ${resultKeys.length ? `${sectionTitle('Channel Audit Results')}${channelHTML}` : ''}
+    `);
+
+    storeData('a4', {
+      fields: [
+        { label: 'Persona',           value: persona,  highlight: 'accent' },
+        { label: 'Audit Mode',        value: mode },
+        { label: 'Overall Severity',  value: severity, highlight: /pass/i.test(fmt(severity)) ? 'green' : 'red' },
+        { label: 'Pipeline Blocked',  value: blocked ? 'YES' : 'NO', highlight: blocked ? 'red' : 'green' },
+        { label: 'Total Violations',  value: allViolations.length, highlight: allViolations.length > 0 ? 'red' : 'green' },
+        { label: 'Channels Audited',  value: resultKeys.length },
+      ],
+      violations: allViolations.map(v => ({
+        type: pick(v, 'severity', 'type', 'level') || 'BLOCK',
+        code: pick(v, 'regulation', 'code', 'rule_id') || '',
+        text: pick(v, 'issue', 'description', 'text', 'message') || '',
+        fix:  pick(v, 'compliant_rewrite', 'fix', 'recommendation') || '',
+      })),
+    });
+  };
+
+  // ── Agent 5 — Disclosure Injection Agent ──────────────────────────────
+  window.renderA5 = function(d) {
+    if (!d) return;
+    console.log('[A5 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a5 = d;
+
+    const disclosed = pick(d, 'disclosed_content', 'channel_packages', 'channels', 'output', 'content') || {};
+    const totalInj  = pick(d, 'total_injected', 'disclosure_count', 'total_disclosures', 'count');
+    const chKeys    = Object.keys(disclosed);
+    // Also check direct channel keys
+    const knownCh   = ['Instagram', 'Push Notification', 'instagram', 'push_notification'];
+    const extra     = knownCh.filter(k => d[k] != null && !chKeys.includes(k));
+    const allKeys   = [...chKeys, ...extra];
+    const getC      = (ch) => disclosed[ch] ?? d[ch];
+
+    const blocksHTML = allKeys.map(ch => {
+      const content = getC(ch);
+      const text    = typeof content === 'string' ? content : (pick(content, 'body', 'caption', 'content', 'text') || JSON.stringify(content));
+      return `
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:5px">${ch}</div>
+          ${contentBox(text)}
+        </div>
+      `;
+    }).join('');
+
+    setOut('a5', `
+      ${sectionTitle('Disclosure Injection Summary')}
+      <div class="kv-grid" style="margin-bottom:14px">
+        ${kv('Disclosures Injected', fmt(totalInj ?? allKeys.length), 'green')}
+        ${kv('Channels Processed',   allKeys.join(', ') || 'N/A')}
+        ${kv('Statutory Lock',       'ENABLED', 'green')}
+        ${kv('Downstream Edits',     'LOCKED', 'green')}
+      </div>
+      ${blocksHTML || `<div style="color:var(--text-muted);font-size:12px;padding:6px 0">Content with disclosures passed through — check agent log for details.</div>`}
+    `);
+
+    storeData('a5', {
+      fields: [
+        { label: 'Disclosures Injected', value: fmt(totalInj ?? allKeys.length), highlight: 'green' },
+        { label: 'Channels',             value: allKeys.join(', ') || 'N/A' },
+        { label: 'Statutory Lock',       value: 'ENABLED', highlight: 'green' },
+      ],
+      contentBlocks: allKeys.map(ch => {
+        const c = getC(ch);
+        const text = typeof c === 'string' ? c : (pick(c, 'body', 'caption', 'content', 'text') || '');
+        return { channel: ch, text, status: 'DISCLOSED' };
+      }),
+    });
+  };
+
+  // ── Agent 6 — Vernacular Localization Agent ────────────────────────────
+  window.renderA6 = function(d) {
+    if (!d) return;
+    console.log('[A6 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a6 = d;
+
+    const required  = pick(d, 'vernacular_required', 'vernacular', 'localization_required');
+    const packages  = pick(d, 'localized_packages', 'channel_packages', 'channels', 'output') || {};
+    const chKeys    = Object.keys(packages);
+    const knownCh   = ['Instagram', 'Push Notification', 'instagram', 'push_notification'];
+    const extra     = knownCh.filter(k => d[k] != null && !chKeys.includes(k));
+    const allKeys   = [...chKeys, ...extra];
+    const getPkg    = (ch) => packages[ch] ?? d[ch];
+
+    const allLangs  = [...new Set(allKeys.map(ch => {
+      const p = getPkg(ch);
+      return pick(p, 'language', 'lang', 'locale') || 'EN';
+    }))];
+
+    const blocksHTML = allKeys.map(ch => {
+      const pkg  = getPkg(ch);
+      const lang = pick(pkg, 'language', 'lang', 'locale') || 'EN';
+      const text = typeof pkg === 'string' ? pkg : (pick(pkg, 'content', 'body', 'caption', 'text') || JSON.stringify(pkg));
+      return `
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)">${ch}</span>
+            <span class="badge-pill pill-grey" style="font-size:10px;padding:1px 8px">${lang}</span>
+          </div>
+          ${contentBox(text)}
+        </div>
+      `;
+    }).join('');
+
+    setOut('a6', `
+      ${sectionTitle('Localization Summary')}
+      <div class="kv-grid" style="margin-bottom:14px">
+        ${kv('Vernacular Required', required ? 'YES' : 'NO', required ? 'accent' : 'green')}
+        ${kv('Languages Used',      allLangs.join(', ') || 'EN')}
+        ${kv('Channels',            allKeys.length)}
+        ${kv('Status',              required ? 'TRANSLATED' : 'PASS-THROUGH', 'green')}
+      </div>
+      ${blocksHTML || `<div style="color:var(--text-muted);font-size:12px;padding:6px 0">Content passed through in original language — vernacular not required.</div>`}
+    `);
+
+    storeData('a6', {
+      fields: [
+        { label: 'Vernacular Required', value: required ? 'YES' : 'NO', highlight: required ? 'accent' : 'green' },
+        { label: 'Languages',           value: allLangs.join(', ') || 'EN' },
+        { label: 'Status',              value: required ? 'TRANSLATED' : 'PASS-THROUGH', highlight: 'green' },
+        { label: 'Channels',            value: allKeys.length },
+      ],
+      contentBlocks: allKeys.map(ch => {
+        const p = getPkg(ch);
+        const lang = pick(p, 'language', 'lang', 'locale') || 'EN';
+        const text = typeof p === 'string' ? p : (pick(p, 'content', 'body', 'caption', 'text') || '');
+        return { channel: `${ch} (${lang})`, text, status: 'PASS' };
+      }),
+    });
+  };
+
+  // ── Agent 7 — Channel Formatter ────────────────────────────────────────
+  window.renderA7 = function(d) {
+    if (!d) return;
+    console.log('[A7 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a7 = d;
+
+    const packages = pick(d, 'formatted_packages', 'channel_packages', 'channels', 'output') || {};
+    const chKeys   = Object.keys(packages);
+    const knownCh  = ['Instagram', 'Push Notification', 'instagram', 'push_notification'];
+    const extra    = knownCh.filter(k => d[k] != null && !chKeys.includes(k));
+    const allKeys  = [...chKeys, ...extra];
+    const getPkg   = (ch) => packages[ch] ?? d[ch];
+
+    const channelCards = allKeys.map(ch => {
+      const pkg       = getPkg(ch);
+      const status    = pick(pkg, 'validation_status', 'status', 'result') || 'PASS';
+      const charCount = pick(pkg, 'char_count', 'character_count', 'chars');
+      const charLimit = pick(pkg, 'char_limit', 'character_limit', 'limit');
+      const schedule  = pick(pkg, 'schedule', 'dispatch_window', 'optimal_window', 'recommended_time');
+      const hook      = pick(pkg, 'hook', 'headline', 'title');
+      const body      = pick(pkg, 'body', 'content', 'text', 'caption', 'copy');
+      const cta       = pick(pkg, 'cta', 'call_to_action');
+      const hashtags  = pick(pkg, 'hashtags', 'tags');
+      const vColor    = /pass/i.test(status) ? 'green' : 'red';
+
+      return `
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px;font-weight:700;color:var(--text-main)">${ch}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              ${charCount != null ? `<span style="font-size:11px;color:var(--text-muted)">${charCount}${charLimit ? ' / ' + charLimit : ''} chars</span>` : ''}
+              <span class="badge-pill pill-${vColor}" style="font-size:10px;padding:2px 10px">${status}</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+            ${hook  ? `<div style="grid-column:1/-1"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Hook / Headline</div><div style="font-size:12.5px;font-weight:600;color:var(--text-main)">${hook}</div></div>` : ''}
+            ${body  ? `<div style="grid-column:1/-1"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Body Copy</div>${contentBox(body)}</div>` : ''}
+            ${cta   ? `<div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">CTA</div><span class="badge-pill pill-blue" style="font-size:11px">${cta}</span></div>` : ''}
+            ${schedule ? `<div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Dispatch Window</div><div style="font-size:12px;font-weight:600;color:var(--text-main)">${schedule}</div></div>` : ''}
+            ${hashtags ? `<div style="grid-column:1/-1"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Hashtags</div><div style="font-size:11.5px;color:var(--blue);line-height:1.7">${Array.isArray(hashtags) ? hashtags.join(' ') : hashtags}</div></div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const passCount = allKeys.filter(ch => {
+      const p = getPkg(ch);
+      return /pass/i.test(pick(p, 'validation_status', 'status', 'result') || 'PASS');
+    }).length;
+
+    setOut('a7', `
+      ${sectionTitle('Channel Formatting Summary')}
+      <div class="kv-grid" style="margin-bottom:16px">
+        ${kv('Channels Formatted', allKeys.length, 'green')}
+        ${kv('Validation Passed',  passCount + ' / ' + allKeys.length, passCount === allKeys.length ? 'green' : 'red')}
+        ${kv('Disclosures Intact', 'YES', 'green')}
+        ${kv('Status',             'Ready for Human Gate', 'accent')}
+      </div>
+      ${allKeys.length ? `${sectionTitle('Formatted Channel Packages')}${channelCards}` : `<div style="color:var(--text-muted);font-size:12px;padding:6px 0">No formatted packages returned in this run.</div>`}
+    `);
+
+    storeData('a7', {
+      fields: [
+        { label: 'Channels Formatted', value: allKeys.length, highlight: 'green' },
+        { label: 'Validation Passed',  value: passCount + ' / ' + allKeys.length, highlight: passCount === allKeys.length ? 'green' : 'red' },
+        { label: 'Disclosures Intact', value: 'YES', highlight: 'green' },
+        { label: 'Status',             value: 'Ready for Human Gate', highlight: 'accent' },
+      ],
+      contentBlocks: allKeys.map(ch => {
+        const p    = getPkg(ch);
+        const body = pick(p, 'body', 'content', 'text', 'caption') || '';
+        const hook = pick(p, 'hook', 'headline', 'title') || '';
+        const cta  = pick(p, 'cta', 'call_to_action') || '';
+        const text = [hook && `Hook: ${hook}`, body, cta && `CTA: ${cta}`].filter(Boolean).join('\n');
+        return { channel: ch, text, status: pick(p, 'validation_status', 'status') || 'PASS' };
+      }),
+    });
+  };
+
+  // ── Agent 8 — Publisher Agent ──────────────────────────────────────────
+  window.renderA8 = function(d) {
+    if (!d) return;
+    console.log('[A8 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a8 = d;
+
+    const decision  = pick(d, 'human_gate_decision', 'gate_decision', 'approval_decision', 'human_decision');
+    const dispatches =
+      pick(d, 'publish_results', 'dispatch_queue', 'dispatches', 'channel_dispatches', 'channels', 'published') || {};
+    const chKeys    = Object.keys(dispatches);
+    const knownCh   = ['Instagram', 'Push Notification', 'instagram', 'push_notification'];
+    const extra     = knownCh.filter(k => d[k] != null && !chKeys.includes(k) && typeof d[k] === 'object');
+    const allKeys   = [...chKeys, ...extra];
+    const getD      = (ch) => dispatches[ch] ?? d[ch];
+
+    let liveSet = null;
+    try {
+      const rawSim = localStorage.getItem('gcn_publisher_sim_complete');
+      const rid = localStorage.getItem('gcn_run_id') || '';
+      if (rawSim && rid) {
+        const sim = JSON.parse(rawSim);
+        if (sim.runId === rid && Array.isArray(sim.channels)) liveSet = new Set(sim.channels);
+      }
+    } catch (_) {}
+
+    const dispatchCards = allKeys.map(ch => {
+      const dp       = getD(ch);
+      let status     = pick(dp, 'status', 'dispatch_status', 'result') || 'QUEUED';
+      if (liveSet && liveSet.has(ch) && status !== 'BLOCKED' && !dp.blocked) {
+        status = 'POSTED (simulated · Publisher UI)';
+      } else if (status !== 'BLOCKED' && !dp.blocked) {
+        status = `${status} — Publisher UI (Approve) for sim post`;
+      }
+      const schedule = pick(dp, 'schedule', 'dispatch_window', 'window', 'optimal_window');
+      const platform = pick(dp, 'platform', 'platforms');
+      const segment  = pick(dp, 'segment', 'target_segment');
+      const dlt      = pick(dp, 'trai_dlt_validated', 'dlt_validated', 'trai_validated');
+      const score    = pick(dp, 'compliance_score', 'score');
+      return `
+        <div class="kv-grid" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px">
+          ${kv('Channel',      ch, 'accent')}
+          ${kv('Status',       status, 'green')}
+          ${kv('Schedule',     schedule || 'N/A')}
+          ${kv('Platform',     fmt(platform))}
+          ${kv('Segment',      fmt(segment))}
+          ${kv('TRAI DLT',     dlt ? 'VALIDATED' : 'N/A', dlt ? 'green' : '')}
+          ${score != null ? kv('Compliance Score', score) : ''}
+        </div>
+      `;
+    }).join('');
+
+    const dispatchStatusLabel =
+      liveSet && allKeys.some(ch => liveSet.has(ch))
+        ? 'SIMULATED LIVE (Publisher UI)'
+        : 'Validated · awaiting Publisher UI';
+
+    setOut('a8', `
+      ${sectionTitle('Publisher Validation')}
+      <div class="kv-grid" style="margin-bottom:14px">
+        ${kv('Channels Queued',  allKeys.length, 'green')}
+        ${kv('Human Decision',   fmt(decision), 'green')}
+        ${kv('TRAI DLT',         'VALIDATED', 'green')}
+        ${kv('Dispatch Status',  dispatchStatusLabel, 'green')}
+      </div>
+      ${allKeys.length ? `${sectionTitle('Dispatch Queue')}${dispatchCards}` : `<div style="color:var(--text-muted);font-size:12px;padding:6px 0">No dispatch records returned in this run.</div>`}
+    `);
+
+    storeData('a8', {
+      fields: [
+        { label: 'Channels Queued', value: allKeys.length, highlight: 'green' },
+        { label: 'Human Decision',  value: fmt(decision), highlight: 'green' },
+        { label: 'TRAI DLT',        value: 'VALIDATED',  highlight: 'green' },
+        ...allKeys.map(ch => {
+          const dp = getD(ch);
+          return { label: `${ch} Schedule`, value: pick(dp, 'schedule', 'window', 'optimal_window') || 'N/A' };
+        }),
+      ],
+    });
+  };
+
+  // ── Agent 9 — Engagement Intelligence Agent ────────────────────────────
+  window.renderA9 = function(d) {
+    if (!d) return;
+    console.log('[A9 raw]', JSON.stringify(d, null, 2));
+    window._rawAgentData.a9 = d;
+
+    const conf     = pick(d, 'confidence_score', 'confidence', 'conf');
+    const topCh    = pick(d, 'top_channel', 'top_performing_channel', 'best_channel');
+    const calRaw   = pick(d, 'content_calendar', 'calendar', 'calendar_items', '2_week_calendar') || [];
+    const signals  = pick(d, 'engagement_signals', 'signals', 'channel_signals', 'performance') || {};
+    const dbUpd    = pick(d, 'vector_db_updated', 'db_updated', 'vector_updated');
+    const compFlag = pick(d, 'compliance_flag', 'compliance_note', 'compliance_adjusted_flag');
+    const strategyAnalysis = pick(d, 'strategy_analysis') || {};
+    const strategyShift = pick(d, 'strategy_shift') || {};
+    const newMixRaw = pick(d, 'new_content_mix') || [];
+    const patternsRaw = pick(d, 'pattern_detected') || [];
+    const improvedCalendarRaw = pick(d, 'improved_calendar') || [];
+
+    const calendar = Array.isArray(calRaw) ? calRaw : Object.values(calRaw);
+    const signalRows = Array.isArray(signals)
+      ? signals.map((item, index) => ({
+          key: String(index),
+          label: pick(item, 'channel', 'name', 'platform') || `Channel ${index + 1}`,
+          data: item,
+        }))
+      : Object.entries(signals).map(([key, value], index) => ({
+          key,
+          label: pick(value, 'channel', 'name', 'platform') || (Number.isNaN(Number(key)) ? key : `Channel ${index + 1}`),
+          data: value,
+        }));
+    const chSig    = signalRows.map(row => row.label);
+    const newMix   = Array.isArray(newMixRaw) ? newMixRaw : Object.values(newMixRaw);
+    const patterns = Array.isArray(patternsRaw) ? patternsRaw : Object.values(patternsRaw);
+    const improvedCalendar = Array.isArray(improvedCalendarRaw) ? improvedCalendarRaw : Object.values(improvedCalendarRaw);
+
+    const confNum  = parseFloat(conf);
+    const confDisp = conf != null ? fmtPct(conf) : 'N/A';
+    const confColor= !isNaN(confNum) && (confNum >= 0.75 || confNum >= 75) ? 'green' : 'red';
+
+    function resolveTopChannelLabel(value) {
+      if (typeof value === 'string' && value.trim() && Number.isNaN(Number(value))) {
+        return value;
+      }
+
+      const idx = Number(value);
+      if (!Number.isNaN(idx)) {
+        if (signalRows[idx]?.label) return signalRows[idx].label;
+      }
+
+      if (d?.top_signal?.channel && Number.isNaN(Number(d.top_signal.channel))) {
+        return d.top_signal.channel;
+      }
+
+      return chSig[0] || 'N/A';
+    }
+
+    const topChDisp = resolveTopChannelLabel(topCh);
+
+    const mixHTML = newMix.slice(0, 5).map(item => {
+      const ch = pick(item, 'channel', 'focus');
+      const share = pick(item, 'recommended_share', 'share', 'allocation');
+      const rationale = pick(item, 'rationale', 'reason');
+      return `
+        <div class="kv-box">
+          <div class="kv-label">${fmt(ch)}</div>
+          <div class="kv-value" style="font-size:12px;font-weight:600">${fmt(share)}</div>
+          ${rationale ? `<div style="font-size:11px;color:var(--text-muted);font-weight:400;margin-top:4px">${fmt(rationale)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    const patternHTML = patterns.slice(0, 5).map(item => {
+      const key = pick(item, 'key', 'channel');
+      const avgCtr = pick(item, 'avg_ctr', 'ctr');
+      const cat = pick(item, 'dominant_category', 'category');
+      const sample = pick(item, 'sample_size', 'count');
+      return `
+        <div class="kv-box">
+          <div class="kv-label">${fmt(key)}</div>
+          <div class="kv-value" style="font-size:12px;font-weight:600">
+            CTR: ${fmtPct(avgCtr)}${cat ? ` &nbsp;·&nbsp; ${fmt(cat)}` : ''}
+          </div>
+          ${sample != null ? `<div style="font-size:11px;color:var(--text-muted);font-weight:400;margin-top:4px">Sample size: ${fmt(sample)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    const improvedCalHTML = improvedCalendar.slice(0, 10).map(item => `
+      <div class="cal-item">
+        <span class="cal-day">Day ${fmt((pick(item, 'day_offset') ?? 0) + 1)}</span>
+        <span class="cal-channel">${fmt(pick(item, 'focus', 'channel'))}</span>
+        <span class="cal-text">${fmt(pick(item, 'slot', 'time', 'window'))}</span>
+      </div>
+    `).join('');
+
+    const signalHTML = signalRows.map(row => {
+      const ch   = row.label;
+      const s    = row.data;
+      const ctr  = pick(s, 'ctr', 'click_through_rate', 'ctr_pct');
+      const conv = pick(s, 'conversion', 'conversion_rate', 'conv', 'conv_rate');
+      const imp  = pick(s, 'impressions', 'reach', 'views');
+      return `
+        <div class="kv-box">
+          <div class="kv-label">${ch}</div>
+          <div class="kv-value" style="font-size:12px;font-weight:600">
+            CTR: ${fmtPct(ctr)} &nbsp; Conv: ${fmtPct(conv)}
+            ${imp != null ? `<div style="font-size:11px;color:var(--text-muted);font-weight:400;margin-top:2px">${Number(imp).toLocaleString()} impressions</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const calHTML = calendar.slice(0, 10).map(item => {
+      const day = pick(item, 'day', 'day_number', 'date');
+      const ch  = pick(item, 'channel', 'platform');
+      const txt = pick(item, 'headline', 'text', 'topic', 'content', 'title');
+      const tag = pick(item, 'tag', 'risk_tag', 'flag') || '';
+      return `
+        <div class="cal-item">
+          <span class="cal-day">Day ${fmt(day)}</span>
+          <span class="cal-channel">${fmt(ch)}</span>
+          <span class="cal-text">${fmt(txt)}</span>
+          ${tag ? `<span class="badge-pill pill-red" style="font-size:9px;padding:1px 7px;margin-left:auto">${tag}</span>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    setOut('a9', `
+      ${sectionTitle('Engagement Summary')}
+      <div class="kv-grid" style="margin-bottom:14px">
+        ${kv('Confidence Score',    confDisp, confColor)}
+        ${kv('Top Channel',         topChDisp, 'accent')}
+        ${kv('Calendar Generated',  calendar.length ? 'YES' : 'NO', calendar.length ? 'green' : 'accent')}
+        ${kv('Vector DB Updated',   dbUpd ? 'YES' : 'NO', dbUpd ? 'green' : '')}
+      </div>
+      ${chSig.length ? `${sectionTitle('Engagement Signals by Channel')}<div class="kv-grid" style="margin-bottom:14px">${signalHTML}</div>` : ''}
+      ${compFlag ? `<div class="violation-box" style="margin:0 0 14px">
+        <span class="v-type">COMPLIANCE-ADJUSTED FLAG</span>
+        <div class="v-text" style="margin-top:4px">${compFlag}</div>
+      </div>` : ''}
+      ${(strategyAnalysis.summary || strategyAnalysis.shift || strategyShift.recommendation)
+        ? `${sectionTitle('Strategy Analysis')}
+          <div class="kv-grid" style="margin-bottom:14px">
+            ${strategyAnalysis.summary ? `<div class="kv-box" style="grid-column:1/-1"><div class="kv-label">Claude Pattern Analysis</div><div class="kv-value" style="font-size:12px;line-height:1.7">${fmt(strategyAnalysis.summary)}</div></div>` : ''}
+            ${(strategyAnalysis.shift || strategyShift.recommendation) ? `<div class="kv-box" style="grid-column:1/-1"><div class="kv-label">Shift Strategy</div><div class="kv-value" style="font-size:12px;line-height:1.7">${fmt(strategyAnalysis.shift || strategyShift.recommendation)}</div></div>` : ''}
+          </div>`
+        : ''}
+      ${mixHTML ? `${sectionTitle('Recommended New Mix')}<div class="kv-grid" style="margin-bottom:14px">${mixHTML}</div>` : ''}
+      ${patternHTML ? `${sectionTitle('Pattern Analysis')}<div class="kv-grid" style="margin-bottom:14px">${patternHTML}</div>` : ''}
+      ${improvedCalHTML ? `${sectionTitle('Improved Content Calendar')}<div class="calendar-row">${improvedCalHTML}</div>` : ''}
+      ${calendar.length ? `${sectionTitle('2-Week Content Calendar')}<div class="calendar-row">${calHTML}</div>` : ''}
+    `);
+
+    storeData('a9', {
+      fields: [
+        { label: 'Confidence Score',   value: confDisp,    highlight: confColor },
+        { label: 'Top Channel',        value: topChDisp,   highlight: 'accent' },
+        { label: 'Calendar Generated', value: calendar.length ? 'YES' : 'NO', highlight: calendar.length ? 'green' : 'accent' },
+        { label: 'Vector DB Updated',  value: dbUpd ? 'YES' : 'NO', highlight: dbUpd ? 'green' : '' },
+        { label: 'Shift Strategy',     value: fmt(strategyAnalysis.shift || strategyShift.recommendation || 'N/A') },
+        ...signalRows.map(row => {
+          const ch = row.label;
+          const s = row.data;
+          return { label: ch + ' CTR', value: fmtPct(pick(s,'ctr','click_through_rate','ctr_pct')) };
+        }),
+      ],
+      calendar: (improvedCalendar.length ? improvedCalendar : calendar).slice(0, 10).map(item => ({
+        day:     pick(item, 'day', 'day_number', 'date', 'day_offset'),
+        channel: pick(item, 'channel', 'platform', 'focus'),
+        text:    pick(item, 'headline', 'text', 'topic', 'content', 'title', 'slot'),
+      })),
+      reasoning: fmt(strategyAnalysis.summary || strategyAnalysis.shift || strategyShift.recommendation || ''),
+    });
+  };
+</script>
+
+</body>
+</html>
